@@ -18,5 +18,6 @@ void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 	gdt_init();
 	idt_init();
 
+	while(1);
 }
  

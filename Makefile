@@ -4,7 +4,6 @@ ASFLAGS   = -f elf32
 CC		  = i386-elf-gcc
 CFLAGS    = -ffreestanding -nostdlib -nostdinc
 CFLAGS   += -Wall -Wextra -std=c99 -O3 -g
-CFLAGS   += -fstack-protector-strong
 CFLAGS   += -Isrc/include
 
 LINKER    = link.ld

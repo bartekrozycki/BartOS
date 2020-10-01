@@ -1,5 +1,7 @@
 #include "lib.h"
+#include "terminal.h"
 #include "ints.h"
+
 
 int memcmp(const void* p1, const void* p2, size_t n)
 {
@@ -63,7 +65,7 @@ char* strdup(const char* str)
     //     return (char*) 0;
     
     // return (char*) memcpy (result, str, len);
-    return NULL;
+    return (char *) str;
 }
 size_t strlen(const char* str)
 {
@@ -74,4 +76,67 @@ size_t strlen(const char* str)
         len++;
 
     return len;
+}
+
+char *itoa (int value, char * str, int base )
+{
+    if (!str)
+        return NULL;
+
+    if (base < 2 || base > 16) //base not supported yet :)
+        return NULL;
+
+    u32 uvalue;
+    u32 i = 0;
+    
+    /* 
+     * Negative numbers are only supported for decimal.
+     * Cast to unsigned to avoid overflow for maximum negative value.  
+     *                                                                  */
+    
+    if ((base == 10) && (value < 0))
+    {              
+        *(str) = '-';
+        uvalue = (unsigned)-value;
+        i++;
+    }
+    else
+        uvalue = (unsigned)value;
+    
+    return utoa(uvalue, str + i, base);
+}
+char *utoa (int value, char * str, int base )
+{
+    const char digits[] = "0123456789ABCDEF";
+    int i, j;
+    unsigned remainder;
+    char c;
+
+    /* Check base is supported. */
+    if ((base < 2) || (base > 16))
+    { 
+        str[0] = '\0';
+        return NULL;
+    }  
+
+    /* Convert to string. Digits are in reverse order.  */
+    i = 0;
+    do 
+    {
+        remainder = value % base;
+        str[i++] = digits[remainder];
+        value = value / base;
+    } while (value != 0);  
+    str[i] = '\0'; 
+
+    /* Reverse string.  */
+    for (j = 0, i--; j < i; j++, i--)
+    {
+        c = str[j];
+        str[j] = str[i];
+        str[i] = c; 
+    }       
+
+    return str;
+    
 }

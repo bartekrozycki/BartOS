@@ -48,5 +48,4 @@ void terminal_setcolor(uint8_t color);
 void terminal_putchar(char c);
 void terminal_write(const char* data, u32 size);
 int terminal_writestring(const char* data);
-int terminal_write_dec(u32 d);
-int terminal_write_hex(u32 d);
+int terminal_write_base(i32 d, u32 base);

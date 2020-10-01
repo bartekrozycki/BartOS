@@ -25,7 +25,7 @@ stack_top:
 
 section .text
 
-global _start
+global _start:function (_start.end - _start)
 _start:
 
 	cli					; BLOCK INTERRUPTS
@@ -41,5 +41,7 @@ _start:
 	call Main
 
 	cli
+.hang:	
 	hlt
-	jmp $
+	jmp .hang
+.end:

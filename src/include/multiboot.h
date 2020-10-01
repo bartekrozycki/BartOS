@@ -49,7 +49,9 @@ MultibootInfo;
 
 typedef struct {
 	u32 size;
-	u64 base_address;
+	// u64 base_address;
+	u32 base_addr_low;
+	u32 base_addr_high;
 	u64 length;
 	u32 type;
 } __attribute__((packed))

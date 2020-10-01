@@ -1,6 +1,7 @@
 #include "ints.h"
 #include "terminal.h"
 #include "misc.h"
+#include "lib.h"
 
 u32     terminal_pos_row, 
         terminal_pos_col;
@@ -111,11 +112,11 @@ int terminal_writestring(const char* data)
         
     return i;
 }
-int terminal_write_dec(u32 d)
+int terminal_write_base(i32 d, u32 base)
 {
+    char i_dec[32];
+    char *x = itoa(d, i_dec, base);
+    terminal_writestring(x);
+
     return d; // TODO    
-}
-int terminal_write_hex(u32 d)
-{ 
-    return d; // TODO
 }

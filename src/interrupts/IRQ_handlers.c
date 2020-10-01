@@ -1,20 +1,64 @@
 #include "IRQ_handlers.h"
 #include "misc.h"
 #include "terminal.h"
+#include "print.h"
+
+const char* exception_messages[32] = {
+	"Division by zero",
+	"Debug",
+	"Non-maskable interrupt",
+	"Breakpoint",
+	"Detected overflow",
+	"Out-of-bounds",
+	"Invalid opcode",
+	"No coprocessor",
+	"Double fault",
+	"Coprocessor segment overrun",
+	"Bad TSS",
+	"Segment not present",
+	"Stack fault",
+	"General protection fault",
+	"Page fault",
+	"Unknown interrupt",
+	"Coprocessor fault",
+	"Alignment check",
+	"Machine check",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+};
+void isr_handler(InterruptSave is)
+{   
+
+    printf("Exception: %s", exception_messages[is.int_num]);
+
+    __asm__("xchgw %dx, %dx");
+
+    permahalt();
+}
 
 void irq0_handler(void) {
     out(0x20, 0x20); //EOI
 }
 
 void irq1_handler(void) {
-    out(0x20, 0x20); //EOI
-
     if (in(0x64) & 0x01)
     {   
         u8 keycode = in(0x60);
 
         terminal_putchar((char) keycode);
     }
+    out(0x20, 0x20); //EOI
 }
 
 void irq2_handler(void) {

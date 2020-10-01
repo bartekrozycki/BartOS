@@ -1,35 +1,29 @@
 #include "ints.h"
 #include "terminal.h"
+#include "gdt.h"
+#include "lib.h"
 
 void gdt_load(u32 gdt_ptr);
 void gdt_set_gate(u32 n, u32 base, u32 limit, u8 access, u8 flag);
 
-struct {
-	u16 limit_low;
-	u16 base_low;
-	u8  base_middle;
-	u8  access;
-	u8  limit_high_and_flags;
-	u8  base_high;
-} __attribute__((packed)) gdt[5];
-
-struct {
-	u16 limit;
-	u32 base;
-} __attribute__((packed)) gdt_ptr;
-
-extern u32 stack_top;
+struct _GDT gdt[5];
+struct _GDT_Descriptor gdt_ptr;
 
 void gdt_init(void) {
+
+	ASSERT(struct _GDT, 8)
+	ASSERT(struct _GDT_Descriptor, 6)
+
     // Descriptor
 	gdt_ptr.limit = sizeof(gdt) - 1;
 	gdt_ptr.base  = (u32) &gdt;
 
 	gdt_set_gate(0, 0, 0, 0, 0);                // null entry
-	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // kernel code
-	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // kerel data
-	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // user code
-	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // user data 
+	gdt_set_gate(1, 0, 0xFFFFFFFF, 0b10011010, 0b11001111); // kernel code Execute/Read 
+	gdt_set_gate(2, 0, 0xFFFFFFFF, 0b10010010, 0b11001111); // kerel data Read/Write 
+									//11
+	gdt_set_gate(3, 0, 0xFFFFFFFF, 0b10011010, 0b11001111); // user code
+	gdt_set_gate(4, 0, 0xFFFFFFFF, 0b10010010, 0b11001111); // user data 
                                                 // Covering 4GiB adddress space
 
 	gdt_load((u32) &gdt_ptr);

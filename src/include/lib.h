@@ -1,5 +1,13 @@
 #pragma once
 
+#include "terminal.h"
+
+#define ASSERT(str, size) \
+if (sizeof(str) != size) {\
+   terminal_writestring("(Assert failed) " #str " =/= " #size "."); \
+   while(1);\
+}
+
 // stddef.h
 #define NULL ((void*) 0)
 typedef unsigned int size_t;
@@ -23,4 +31,7 @@ int strcmp(const char* s1, const char* s2);
 char* strcpy(char* dest, const char* src);
 char* strdup(const char* str);
 size_t strlen(const char* str);
+char *utoa (int value, char * str, int base);
+char *itoa (int value, char * str, int base);
+
 

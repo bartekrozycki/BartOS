@@ -3,7 +3,7 @@ ASFLAGS   = -f elf32
 
 CC		  = i386-elf-gcc
 CFLAGS    = -ffreestanding -nostdlib -nostdinc
-CFLAGS   += -Wall -Wextra -std=c99 -O3 -g
+CFLAGS   += -Wall -Wextra -std=c99 -O0 -g
 CFLAGS   += -Isrc/include
 
 LINKER    = link.ld
@@ -26,21 +26,21 @@ OBJS      = $(C_OBJS) $(ASM_OBJS)
 all: $(ISO) clean
 
 ${ISO}: ${KERNEL}
-	mkdir -p isodir/boot/grub
-	mv $(KERNEL) isodir/boot/$(KERNEL)
-	cp grub.cfg isodir/boot/grub/grub.cfg
-	grub-mkrescue -o os.iso isodir
+	@mkdir -p isodir/boot/grub
+	@mv $(KERNEL) isodir/boot/$(KERNEL)
+	@cp grub.cfg isodir/boot/grub/grub.cfg
+	@grub-mkrescue -o os.iso isodir
 
 ${KERNEL}: $(OBJS) $(LINKER)
 	$(info Linking object files)
-	ld $(LDFLAGS) $(OBJS) -o $@
+	@ld $(LDFLAGS) $(OBJS) -o $@
 
 %.o:%.asm
-	$(info Compiling ASM)
-	$(AS) $(ASFLAGS) $^
+	$(info [Compiling ASM] $^)
+	@$(AS) $(ASFLAGS) $^
 %.o:%.c
-	$(info Compiling C)
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(info [Compiling C] $^)
+	@$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
 	$(info Cleaning)

@@ -41,8 +41,8 @@ const char* exception_messages[32] = {
 
 void isr_handler(InterruptSave is)
 {   
-	printf("%s", exception_messages[is.int_num]);
-    __asm__("xchgw %dx, %dx");
+	print(SERIAL, "%s", exception_messages[is.int_num]);
+    __asm__("xchgw %bx, %bx");
     permahalt();
 }
 

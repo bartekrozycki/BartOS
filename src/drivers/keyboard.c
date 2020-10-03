@@ -1,6 +1,7 @@
 #include "IRQ_handlers.h"
 #include "keyboard.h"
 #include "terminal.h"
+#include "print.h"
 #include "misc.h"
 
 
@@ -41,14 +42,16 @@ u8 keymap[128] =
 void keyboard_init(void)
 {
     irq_new_call(KEYBOARD_IRQ_LINE, keyboard_call);
-    terminal_writestring("[Kernel] Keyboard initalized\n");
+    print(SERIAL, "[Kernel] Keyboard initalized\n");
 }
 
 void keyboard_call(InterruptSave *is)
 {
+    UNUSED(is);
+    
     u8 scancode = in(0x60);
 
 	if (!(scancode & 0x80)) // else key relasedc
-		terminal_putchar(keymap[scancode]);
+		terminal_putc(keymap[scancode]);
    
 }

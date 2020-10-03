@@ -13,4 +13,4 @@ struct _IDT_Descriptor{
 	u32 base;
 } __attribute__((packed));
 
-void idt_init(void);
+void init_idt(void);

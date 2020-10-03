@@ -11,6 +11,8 @@
 
 #define PIC_EOI		0x20
 
+#define UNUSED(x) (void)(x)
+
 void permahalt(void);
 void int_wait_forever(void);
 void out(u16 port, u8 data);

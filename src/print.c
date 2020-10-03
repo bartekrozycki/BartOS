@@ -1,7 +1,10 @@
 #include "print.h"
+#include "serial.h"
+#include "terminal.h"
 #include "lib.h"
 
-u32 printf(char *format, ...)
+
+u32 print(STREAM stream, char *format, ...)
 {
     if (!format) return 0;
     
@@ -15,29 +18,58 @@ u32 printf(char *format, ...)
         {
             char czar;
             char *str;
-            i32 num;
+            i64 num;
             switch (*(format + ++i))
             {
                 case 'c': // char
                     czar = (char) va_arg(va, int);
-                    terminal_putchar(czar);
+
+                    if (stream == TERMINAL)
+                        terminal_putc(czar);
+                    else if (stream == SERIAL)
+                        serial_putc(czar);
+
                     break;
                 case 's': // string
                     str = va_arg(va, char *);
-                    terminal_writestring(str);
+
+                    if (stream == TERMINAL)
+                        terminal_writestring(str);
+                    else if (stream == SERIAL)
+                        serial_writestring(str);
+
                     break;
                 case 'd': // decmial
                     num = va_arg(va, i32);
-                    terminal_write_base(num, 10);
+
+                    if (stream == TERMINAL)
+                        terminal_write_base(num, 10);
+                    else if (stream == SERIAL)
+                        serial_writebase(num, 10);
+
                     break;
                 case 'u': // unsigned decmial
                     num = va_arg(va, u32);
-                    terminal_write_base(num, 10);
+
+                    if (stream == TERMINAL)
+                        terminal_write_base(num, 10);
+                    else if (stream == SERIAL)
+                        serial_writebase(num, 10);
+
                     break;
                 case 'b': // binary
                     num = va_arg(va, i32);
-                    terminal_write_base(num, 2);
-                    terminal_putchar('b');
+                    
+                    if (stream == TERMINAL)
+                    {
+                        terminal_write_base(num, 2);
+                        terminal_putc('b');
+                    }
+                    else if (stream == SERIAL)
+                    {
+                        serial_writebase(num, 2);
+                        serial_putc('b');
+                    }
                     break;
                 case 'x': // hexadecmial
                     num = va_arg(va, i32);
@@ -45,14 +77,29 @@ u32 printf(char *format, ...)
                     break;
                 case 'p': // pointer
                     num = va_arg(va, i32);
-                    terminal_writestring("0x");
-                    terminal_write_base(num, 16);
+                    
+                    if (stream == TERMINAL)
+                    {
+                        terminal_writestring("0x");
+                        terminal_write_base(num, 16);
+                    }
+                    else if (stream == SERIAL)
+                    {
+                        serial_writestring("0x");
+                        serial_writebase(num, 16);
+                    }
+                    
                     break;
             }
             ++i;
             continue;
         }
-        terminal_putchar(*(format + i));
+
+        if (stream == TERMINAL)
+            terminal_putc(*(format + i));
+        else if (stream == SERIAL)
+            serial_putc(*(format + i));
+
         ++i;
     }
     return i;

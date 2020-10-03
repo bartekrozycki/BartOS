@@ -2,6 +2,7 @@
 #include "terminal.h"
 #include "misc.h"
 #include "lib.h"
+#include "print.h"
 
 u32     terminal_pos_row, 
         terminal_pos_col;
@@ -28,7 +29,7 @@ void terminal_cursor_enable(uint8_t cursor_start, uint8_t cursor_end)
 	out(0x3D5, (in(0x3D5) & 0xE0) | cursor_end);
 }
 
-void terminal_initialize(void)
+void init_terminal(void)
 {
     terminal_pos_row = 0;
     terminal_pos_col = 0;
@@ -38,6 +39,8 @@ void terminal_initialize(void)
     terminal_clear();
     
     terminal_cursor_enable(13, 15);
+
+    print(SERIAL, "[Kernel] Terminal initialized.\n");
 
 }
 void terminal_clear(void)
@@ -73,7 +76,7 @@ void entry_at(u8 col, u8 row, u8 color, char c)
     else
         terminal_cursor_set(row, col+1);
 }
-void terminal_putchar(char c)
+void terminal_putc(char c)
 {
     if (c == '\n')
     {
@@ -100,7 +103,7 @@ void terminal_write(const char* data, u32 size)
     
     for (u32 i = 0; i < size; i++)
     {
-        terminal_putchar(*(data + i));
+        terminal_putc(*(data + i));
     }
     
 }
@@ -108,7 +111,7 @@ int terminal_writestring(const char* data)
 {
     int i = 0;
     while (*(data+i))
-        terminal_putchar(*(data+(i++)));
+        terminal_putc(*(data+(i++)));
         
     return i;
 }

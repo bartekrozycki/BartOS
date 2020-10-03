@@ -14,4 +14,4 @@ struct _GDT_Descriptor{
 	u32 base;
 }__attribute((packed));
 
-void gdt_init(void);
+void init_gdt(void);

@@ -1,5 +1,5 @@
 #include "ints.h"
-#include "terminal.h"
+#include "print.h"
 #include "gdt.h"
 #include "lib.h"
 
@@ -9,7 +9,7 @@ void gdt_set_gate(u32 n, u32 base, u32 limit, u8 access, u8 flag);
 struct _GDT gdt[5];
 struct _GDT_Descriptor gdt_ptr;
 
-void gdt_init(void) {
+void init_gdt(void) {
 
 	ASSERT(struct _GDT, 8)
 	ASSERT(struct _GDT_Descriptor, 6)
@@ -28,7 +28,7 @@ void gdt_init(void) {
 
 	gdt_load((u32) &gdt_ptr);
 
-    terminal_writestring("[Kernel] GDT Initalized.\n");
+    print(SERIAL, "[Kernel] GDT Initalized.\n");
 }
 
 void gdt_set_gate(u32 n, u32 base, u32 limit, u8 access, u8 flag) {

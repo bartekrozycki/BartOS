@@ -19,7 +19,7 @@
 #define MULTIBOOT_MEMORY_AVAILABLE 1
 #define MULTIBOOT_MEMORY_RESERVED  2
 
-typedef struct {
+typedef struct MultibootInfo{
 	u32 flags;
 	u32 mem_lower; // in KB
 	u32 mem_upper;
@@ -47,17 +47,19 @@ typedef struct {
 } __attribute__((packed))
 MultibootInfo;
 
-typedef struct {
+typedef struct MultibootMemoryMap{
 	u32 size;
 	// u64 base_address;
 	u32 base_addr_low;
 	u32 base_addr_high;
-	u64 length;
+	// u64 length;
+	u32 length_low;
+	u32 length_high;
 	u32 type;
 } __attribute__((packed))
 MultibootMemoryMap;
 
-typedef struct {
+typedef struct MultibootModules{
 	u32 mod_start;
 	u32 mod_end;
 	u32 cmdline;

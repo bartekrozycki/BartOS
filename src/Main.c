@@ -5,20 +5,35 @@
 #include "misc.h"
 #include "print.h"
 #include "keyboard.h"
+#include "serial.h"
+
+extern u32 stack_top;
+extern u32 _kernel_end;
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
 	if (mboot_magic != MULTIBOOT_EAX_MAGIC)
 		permahalt();
 
-	terminal_initialize();
+	init_serial();
+	init_terminal();
 
-	MultibootMemoryMap 	*mmap = (void *) mboot_info->mmap_address; // 0x10b844
-	// MultibootModules 	*modules = (void *) mboot_info->mods_address;
+	if (mboot_info->flags & 0b1000001 ) // verify mmap and memlowwer&memupper loaded correctly
+	{
+		MultibootMemoryMap 	*mmap = (MultibootMemoryMap *) mboot_info->mmap_address;
 
-	gdt_init();
-	idt_init();
+		while ((u32) mmap < (mboot_info->mmap_address + mboot_info->mmap_length))
+		{
+				/////////////////////////////////////////
+	//////////// TODO memory managment paging ect
+				////////////////////////
+			mmap = (MultibootMemoryMap *)((u32)mmap + mmap->size + sizeof(mmap->size));
+		}
+	}
+	else permahalt();
 
+	init_gdt();
+	init_idt();
 	keyboard_init();
 
 	int_wait_forever();

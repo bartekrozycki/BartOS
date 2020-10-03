@@ -3,7 +3,7 @@
 #include "terminal.h"
 #include "idt.h"
 #include "lib.h"
-#include "lib.h"
+#include "print.h"
 
 struct _IDT_Descriptor idt_ptr;
 struct _IDT idt[256];
@@ -32,7 +32,7 @@ extern void isr186();
 
 void idt_set_gate(u8 n, u32 base, u16 selector, u8 flags);
 
-void idt_init(void)
+void init_idt(void)
 {
 
 	ASSERT(struct _IDT, 8)
@@ -76,8 +76,8 @@ void idt_init(void)
 	/*
 		null - end 
 	*/
-	// out(PIC1_DATA, 0x00);
-	// out(PIC2_DATA, 0x00);
+	out(PIC1_DATA, 0x00);
+	out(PIC2_DATA, 0x00);
 
 	idt_set_gate(0,  (u32) isr0,  0x08, 0x8E);
 	idt_set_gate(1,  (u32) isr1,  0x08, 0x8E);
@@ -137,7 +137,7 @@ void idt_init(void)
 	load_idt((u32) &idt_ptr);
 
 
-	terminal_writestring("[Kernel] IDT Initialized\n");
+	print(SERIAL, "[Kernel] IDT initialized.\n");
 }
 
 void idt_set_gate(u8 n, u32 base, u16 selector, u8 flags) {

@@ -2,4 +2,9 @@
 
 #include "ints.h"
 
-u32 printf(char *format, ...);
+typedef enum STREAM{
+    TERMINAL = 0,
+    SERIAL = 1
+} STREAM;
+
+u32 print(STREAM stream, char *format, ...);

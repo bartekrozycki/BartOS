@@ -28,21 +28,10 @@ typedef struct InterruptSave{
 	u32 ss;
 } __attribute__((packed)) InterruptSave;
 
-void isr_handler(InterruptSave is);
+typedef void (*IrqCall)(InterruptSave *is); // function pointer to interrupts handler
 
-void irq0_handler(void);
-void irq1_handler(void);
-void irq2_handler(void);
-void irq3_handler(void);
-void irq4_handler(void);
-void irq5_handler(void);
-void irq6_handler(void);
-void irq7_handler(void);
-void irq8_handler(void);
-void irq9_handler(void);
-void irq10_handler(void);
-void irq11_handler(void);
-void irq12_handler(void);
-void irq13_handler(void);
-void irq14_handler(void);
-void irq15_handler(void);
+void isr_handler(InterruptSave is);
+void irq_handler(InterruptSave is);
+
+void irq_new_call(u8 irq_number, IrqCall caller);
+void irq_remove_call(u8 irq_number);

@@ -5,8 +5,8 @@
 #include "lib.h"
 #include "lib.h"
 
-struct _IDT idt[256];
 struct _IDT_Descriptor idt_ptr;
+struct _IDT idt[256];
 
 extern void load_idt(u32 idt_ptr);
 
@@ -43,16 +43,41 @@ void idt_init(void)
 
 	memset(idt, 0, sizeof(idt));
 
-	out(0x20, 0x11);
-	out(0xA0, 0x11);
-	out(0x21, 0x20);
-	out(0xA1, 0x28); //0x28
-	out(0x21, 0x04);
-	out(0xA1, 0x02);
-	out(0x21, 0x01);
-	out(0xA1, 0x01);
-	out(0x21, 0x00);
-	out(0xA1, 0x00);
+
+	/*	
+	ICW 1
+		Bit 0 - Set to 1 so we can sent ICW 4
+		Bit 1 - PIC cascading bit. x86 architectures have 2 PICs, so we need the primary PIC cascaded with the slave. Keep it 0
+		Bit 2 - CALL address interval. Ignored by x86 and kept at 8, so keep it 0
+		Bit 3 - Edge triggered/Level triggered mode bit. By default, we are in edge triggered, so leave it 0
+		Bit 4 - Initialization bit. Set to 1
+		Bits 5...7 - Unused on x86, set to 0. 
+	*/
+	out(PIC1, 0x11); // 0b10001 
+	out(PIC2, 0x11); // 
+	/*
+	ICW 2
+		address of IRQs
+	*/
+	out(PIC1_DATA, 0x20); // 32-40
+	out(PIC2_DATA, 0x28); // 40-48
+	/*
+		[ICW 3] Tell it how it is wired to master/slaves.
+	*/
+	out(PIC1_DATA, 0b100);
+	out(PIC2_DATA, 0b010);
+
+	/*
+		[ICW 4] bit 0 - If set (1), it is in 80x86 mode. 
+	*/
+	out(PIC1_DATA, 0b00000001); 
+	out(PIC2_DATA, 0b00000001);
+
+	/*
+		null - end 
+	*/
+	// out(PIC1_DATA, 0x00);
+	// out(PIC2_DATA, 0x00);
 
 	idt_set_gate(0,  (u32) isr0,  0x08, 0x8E);
 	idt_set_gate(1,  (u32) isr1,  0x08, 0x8E);
@@ -87,7 +112,7 @@ void idt_init(void)
 	idt_set_gate(30, (u32) isr30, 0x08, 0x8E);
 	idt_set_gate(31, (u32) isr31, 0x08, 0x8E);
 
-	// IRQs
+	// PIC_1
 	idt_set_gate(32, (u32) irq0,  0x08, 0x8E);
 	idt_set_gate(33, (u32) irq1,  0x08, 0x8E);
 	idt_set_gate(34, (u32) irq2,  0x08, 0x8E);
@@ -96,6 +121,7 @@ void idt_init(void)
 	idt_set_gate(37, (u32) irq5,  0x08, 0x8E);
 	idt_set_gate(38, (u32) irq6,  0x08, 0x8E);
 	idt_set_gate(39, (u32) irq7,  0x08, 0x8E);
+	// PIC_2
 	idt_set_gate(40, (u32) irq8,  0x08, 0x8E);
 	idt_set_gate(41, (u32) irq9,  0x08, 0x8E);
 	idt_set_gate(42, (u32) irq10, 0x08, 0x8E);
@@ -111,7 +137,7 @@ void idt_init(void)
 	load_idt((u32) &idt_ptr);
 
 
-	terminal_writestring("[Kernel] IDT Initialized");
+	terminal_writestring("[Kernel] IDT Initialized\n");
 }
 
 void idt_set_gate(u8 n, u32 base, u16 selector, u8 flags) {

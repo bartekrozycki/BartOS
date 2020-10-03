@@ -5,6 +5,9 @@ CC		  = i386-elf-gcc
 CFLAGS    = -ffreestanding -nostdlib -nostdinc
 CFLAGS   += -Wall -Wextra -std=c99 -O0 -g
 CFLAGS   += -Isrc/include
+CFLAGS	 += -Isrc/include/std
+CFLAGS	 += -Isrc/include/drivers
+
 
 LINKER    = link.ld
 LDFLAGS   = -T $(LINKER) -melf_i386

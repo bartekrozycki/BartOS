@@ -4,6 +4,7 @@
 #include "terminal.h"
 #include "misc.h"
 #include "print.h"
+#include "keyboard.h"
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
@@ -18,6 +19,7 @@ void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 	gdt_init();
 	idt_init();
 
+	keyboard_init();
 
 	int_wait_forever();
 }

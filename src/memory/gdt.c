@@ -22,8 +22,8 @@ void gdt_init(void) {
 	gdt_set_gate(1, 0, 0xFFFFFFFF, 0b10011010, 0b11001111); // kernel code Execute/Read 
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0b10010010, 0b11001111); // kerel data Read/Write 
 									//11
-	gdt_set_gate(3, 0, 0xFFFFFFFF, 0b10011010, 0b11001111); // user code
-	gdt_set_gate(4, 0, 0xFFFFFFFF, 0b10010010, 0b11001111); // user data 
+	gdt_set_gate(3, 0, 0xFFFFFFFF, 0b11111010, 0b11001111); // user code
+	gdt_set_gate(4, 0, 0xFFFFFFFF, 0b11110010, 0b11001111); // user data 
                                                 // Covering 4GiB adddress space
 
 	gdt_load((u32) &gdt_ptr);

@@ -14,11 +14,10 @@ align 4
 ;==================================
 
 section .bss
-
-align 16
-resb	32768 ; 32KiB
-
 global stack_top
+align 16
+stack_beg:
+resb	32768 ; 32KiB
 stack_top:
 
 ;==================================

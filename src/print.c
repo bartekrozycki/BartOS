@@ -18,7 +18,7 @@ u32 print(STREAM stream, char *format, ...)
         {
             char czar;
             char *str;
-            i64 num;
+            u32 num;
             switch (*(format + ++i))
             {
                 case 'c': // char
@@ -72,11 +72,11 @@ u32 print(STREAM stream, char *format, ...)
                     }
                     break;
                 case 'x': // hexadecmial
-                    num = va_arg(va, i32);
+                    num = va_arg(va, u32);
                     terminal_write_base(num, 16);
                     break;
                 case 'p': // pointer
-                    num = va_arg(va, i32);
+                    num = va_arg(va, u32);
                     
                     if (stream == TERMINAL)
                     {
@@ -102,5 +102,7 @@ u32 print(STREAM stream, char *format, ...)
 
         ++i;
     }
+    va_end(va);
+
     return i;
 }

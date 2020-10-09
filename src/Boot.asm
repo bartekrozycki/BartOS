@@ -16,7 +16,7 @@ align 4
 section .bss
 global stack_top
 align 16
-resb	32768 ; 32KiB
+resb	0x2000 ; 8KiB
 stack_top:
 
 ;==================================

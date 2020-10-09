@@ -16,8 +16,11 @@
 #define MULTIBOOT_FLAG_APM     0x200
 #define MULTIBOOT_FLAG_VBE     0x400
 
-#define MULTIBOOT_MEMORY_AVAILABLE 1
-#define MULTIBOOT_MEMORY_RESERVED  2
+#define MULTIBOOT_MMAP_FREE_MEMORY  1
+#define MULTIBOOT_MMAP_RESERVED     2
+#define MULTIBOOT_MMAP_ACPI         3
+#define MULTIBOOT_MMAP_HIBERNATION  4
+#define MULTIBOOT_MMAP_BAD_CELL     5
 
 typedef struct MultibootInfo{
 	u32 flags;
@@ -49,12 +52,10 @@ MultibootInfo;
 
 typedef struct MultibootMemoryMap{
 	u32 size;
-	// u64 base_address;
-	u32 base_addr_low;
-	u32 base_addr_high;
-	// u64 length;
-	u32 length_low;
-	u32 length_high;
+	u32 base_high;
+	u32 base_low;
+	u32 len_high;
+	u32 len_low;
 	u32 type;
 } __attribute__((packed))
 MultibootMemoryMap;

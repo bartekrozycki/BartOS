@@ -1,5 +1,5 @@
 #include "IRQ_handlers.h"
-#include "misc.h"
+#include "system.h"
 #include "print.h"
 
 IrqCall calls[16];

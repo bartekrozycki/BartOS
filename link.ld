@@ -24,6 +24,12 @@ SECTIONS
 	{
 		*(COMMON)
 		*(.bss)
+		_kernel_end = .;
+
 	}
-	_kernel_end = .;
+	
+	.pages BLOCK(4K) : ALIGN(4K)
+	{
+		_pages = .;
+	}
 }

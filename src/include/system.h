@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ints.h"
+#include "print.h"
 
 #define PIC1		    0x20		/* IO base address for master PIC */
 #define PIC2		    0xA0		/* IO base address for slave PIC */
@@ -12,6 +13,8 @@
 #define PIC_EOI		0x20
 
 #define UNUSED(x) (void)(x)
+
+void kernel_panic(STREAM s, char *error);
 
 void permahalt(void);
 void int_wait_forever(void);

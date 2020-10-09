@@ -105,7 +105,7 @@ char *itoa (int value, char * str, int base )
     
     return utoa(uvalue, str + i, base);
 }
-char *utoa (int value, char * str, int base )
+char *utoa (unsigned int value, char * str, int base )
 {
     const char digits[] = "0123456789ABCDEF";
     int i, j;

@@ -5,7 +5,7 @@ gdt_load:
     mov	eax, [esp + 4]
     lgdt	[eax]
     ; set segment registers to 0x10
-    mov	byte ax, 0x10
+    mov ax, 0x10
     mov	ds, ax
     mov	es, ax
     mov	fs, ax

@@ -1,14 +1,14 @@
 #include "ints.h"
 #include "terminal.h"
-#include "misc.h"
+#include "system.h"
 #include "lib.h"
 #include "print.h"
 
-u32     terminal_pos_row, 
+static u32     terminal_pos_row, 
         terminal_pos_col;
-u8      terminal_color;
+static u8      terminal_color;
 
-u16*    terminal_mem;
+static u16*    terminal_mem;
 
 
 void terminal_cursor_set(unsigned char row, unsigned char col)
@@ -115,10 +115,10 @@ int terminal_writestring(const char* data)
         
     return i;
 }
-int terminal_write_base(i32 d, u32 base)
+int terminal_write_base(u32 d, u32 base)
 {
     char i_dec[32];
-    char *x = itoa(d, i_dec, base);
+    char *x = utoa(d, i_dec, base);
     terminal_writestring(x);
 
     return d; // TODO    

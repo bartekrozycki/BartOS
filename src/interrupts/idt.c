@@ -1,5 +1,5 @@
 #include "ints.h"
-#include "misc.h"
+#include "system.h"
 #include "terminal.h"
 #include "idt.h"
 #include "lib.h"

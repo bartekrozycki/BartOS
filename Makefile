@@ -49,4 +49,6 @@ ${KERNEL}: $(OBJS) $(LINKER)
 clean:
 	$(info Cleaning)
 	rm -f $(OBJS)
+run:
+	@bochs
 	

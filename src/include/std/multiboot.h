@@ -52,10 +52,10 @@ MultibootInfo;
 
 typedef struct MultibootMemoryMap{
 	u32 size;
-	u32 base_high;
-	u32 base_low;
-	u32 len_high;
-	u32 len_low;
+	u32 baselow;
+	u32 basehigh; //not avaible on 32bit
+	u32 lenlow;
+	u32 lenhigh; //not avaible on 32bit
 	u32 type;
 } __attribute__((packed))
 MultibootMemoryMap;

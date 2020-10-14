@@ -41,7 +41,7 @@ static inline u8 vga_entry_color(enum vga_color fg, enum vga_color bg) {
 static inline u16 vga_entry(u8 asci, u8 color) {
 	return (u16) asci | (u16) color << 8;
 }
-
+void entry_at(u8 col, u8 row, u8 color, char c);
 void init_terminal(void);
 void terminal_clear(void);
 void terminal_setcolor(uint8_t color);

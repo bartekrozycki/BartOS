@@ -41,11 +41,11 @@ u8 keymap[128] =
 
 void keyboard_init(void)
 {
-    irq_new_call(KEYBOARD_IRQ_LINE, keyboard_call);
+    irq_new_call(KEYBOARD_IRQ_LINE, keyboard_interrupt);
     print(SERIAL, "[Kernel] Keyboard initalized\n");
 }
 
-void keyboard_call(InterruptSave *is)
+void keyboard_interrupt(InterruptSave *is)
 {
     UNUSED(is);
     

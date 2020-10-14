@@ -88,7 +88,12 @@ u32 print(STREAM stream, char *format, ...)
                         serial_writestring("0x");
                         serial_writebase(num, 16);
                     }
-                    
+                    break;
+                default:
+                    if (stream == TERMINAL)
+                        terminal_writestring("%");
+                    else if (stream == SERIAL)
+                        serial_writestring("%");
                     break;
             }
             ++i;

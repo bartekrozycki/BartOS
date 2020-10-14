@@ -74,10 +74,10 @@ void init_idt(void)
 	out(PIC2_DATA, 0b00000001);
 
 	/*
-		null - end 
+		
 	*/
-	out(PIC1_DATA, 0x00);
-	out(PIC2_DATA, 0x00);
+	out(PIC1_DATA, 0xFB); // mask all without pic1_irq2 PIC SLAVE
+	out(PIC2_DATA, 0xFC); // mask all without pic2_irq1 PIC SLAVE
 
 	idt_set_gate(0,  (u32) isr0,  0x08, 0x8E);
 	idt_set_gate(1,  (u32) isr1,  0x08, 0x8E);

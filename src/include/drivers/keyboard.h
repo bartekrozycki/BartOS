@@ -5,4 +5,4 @@
 #define KEYBOARD_IRQ_LINE 1
 
 void keyboard_init(void);
-void keyboard_call(InterruptSave *is);
+void keyboard_interrupt(InterruptSave *is);

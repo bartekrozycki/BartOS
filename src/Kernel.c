@@ -8,6 +8,7 @@
 #include "serial.h"
 #include "paging.h"
 #include "mmu.h"
+#include "pit.h"
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
@@ -23,8 +24,10 @@ void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 
 	init_gdt();
 	init_idt();
-	keyboard_init();
+	init_pit();
 	
+	keyboard_init();
+
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");
 	print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");
 	print(TERMINAL, " | |_) | __ _ _ __| |_| |  | | (___  \n");

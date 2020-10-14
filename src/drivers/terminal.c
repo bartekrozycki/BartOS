@@ -4,11 +4,11 @@
 #include "lib.h"
 #include "print.h"
 
-static u32     terminal_pos_row, 
-        terminal_pos_col;
-static u8      terminal_color;
+static u32      terminal_pos_row, 
+                terminal_pos_col;
+static u8       terminal_color;
 
-static u16*    terminal_mem;
+static u16*     terminal_mem;
 
 
 void terminal_cursor_set(unsigned char row, unsigned char col)

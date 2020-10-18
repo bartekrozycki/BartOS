@@ -121,5 +121,5 @@ int terminal_write_base(u32 d, u32 base)
     char *x = utoa(d, i_dec, base);
     terminal_writestring(x);
 
-    return d; // TODO    
+    return d;
 }

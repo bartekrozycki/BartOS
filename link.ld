@@ -1,35 +1,33 @@
 ENTRY(_start)
- 
+
+KERNEL_BOOT_VMA = 0x00100000;
+KERNEL_HIGH_VMA = 0xE0000000; /* 3.5 GiB :D */
+
 SECTIONS
 {
-	. = 1M;
-	
-	.text BLOCK(4K) : ALIGN(4K)
+	. = KERNEL_BOOT_VMA;
+	.boot :{ 
+		*/Boot.o (.text)
+	}  
+
+	. += KERNEL_HIGH_VMA;
+
+	_kernel_start = .;
+
+	.text ALIGN(4K) : AT( ADDR(.text) - KERNEL_HIGH_VMA)
 	{
-		*(.multiboot)
-		*(.text)
-	}
- 
-	.rodata BLOCK(4K) : ALIGN(4K)
-	{
+		*(EXCLUDE_FILE (*/Boot.o) .text)
 		*(.rodata)
 	}
- 
-	.data BLOCK(4K) : ALIGN(4K)
+	.data ALIGN(4K) : AT( ADDR(.data) - KERNEL_HIGH_VMA)
 	{
 		*(.data)
 	}
- 
-	.bss BLOCK(4K) : ALIGN(4K)
+	.bss ALIGN(4K) : AT( ADDR(.bss) - KERNEL_HIGH_VMA)
 	{
 		*(COMMON)
 		*(.bss)
-		_kernel_end = .;
-
+		. = ALIGN(0x1000);
 	}
-	
-	.pages BLOCK(4K) : ALIGN(4K)
-	{
-		_pages = .;
-	}
+	_kernel_end = .;
 }

@@ -10,6 +10,9 @@
 #include "mmu.h"
 #include "pit.h"
 
+extern u32 _kernel_end;
+extern u32 _kernel_start;
+
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
 	if (mboot_magic != MULTIBOOT_EAX_MAGIC)
@@ -18,15 +21,18 @@ void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 	init_serial();
 	init_terminal();
 
-	init_mmu(mboot_info);
+	print(TERMINAL, "[Kernel] Starts in %p\n", &_kernel_start);
+	print(TERMINAL, "[Kernel] Ends %p\n\nPaging Enabled !\n\n", &_kernel_end);
 
+	// init_mmu(mboot_info);
 	// init_paging();
 
 	init_gdt();
 	init_idt();
+
 	init_pit();
-	
 	keyboard_init();
+
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");
 	print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");

@@ -2,7 +2,7 @@
 
 #include "ints.h"
 
-typedef union PageDirectoryEntry {
+typedef union PageDirectory {
     u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
     struct {
         u8 present:1; //1 bit 'obecności'
@@ -16,7 +16,7 @@ typedef union PageDirectoryEntry {
         u8 free_space:4;
         u32 address:20;
     }__attribute__((packed));
-}PageDirectoryEntry;
+}PageDirectory;
 
 typedef union PageTableEntry {
     u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
@@ -34,3 +34,5 @@ typedef union PageTableEntry {
         u32 address:20;
     }__attribute__((packed));
 } PageTableEntry;
+
+void init_paging(void);

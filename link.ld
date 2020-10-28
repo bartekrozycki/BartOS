@@ -8,6 +8,7 @@ SECTIONS
 	. = KERNEL_BOOT_VMA;
 	.boot :{ 
 		*/Boot.o (.text)
+		*/pagging.o (.text)
 	}  
 
 	. += KERNEL_HIGH_VMA;
@@ -16,7 +17,7 @@ SECTIONS
 
 	.text ALIGN(4K) : AT( ADDR(.text) - KERNEL_HIGH_VMA)
 	{
-		*(EXCLUDE_FILE (*/Boot.o) .text)
+		*(EXCLUDE_FILE (*/Boot.o */pagging.o) .text)
 		*(.rodata)
 	}
 	.data ALIGN(4K) : AT( ADDR(.data) - KERNEL_HIGH_VMA)

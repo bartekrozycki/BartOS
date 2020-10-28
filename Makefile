@@ -8,6 +8,7 @@ CFLAGS	+= -Isrc/include
 CFLAGS	+= -Isrc/include/std
 CFLAGS	+= -Isrc/include/drivers
 CFLAGS	+= -Isrc/include/memory
+CFLAGS	+= -Isrc/include/interrupts
 
 
 LINKER    = link.ld

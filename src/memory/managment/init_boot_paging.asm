@@ -2,15 +2,19 @@ global init_boot_pagging
 
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
-extern _kernel_end
+extern _init_mem_end
 extern _kernel_start
 extern permahalt
 
 extern page_directory
-extern page_entry_kernel
 extern page_entry_low_memory
-extern page_entry
+extern page_entry_kernel
 
+global reload_cr3
+reload_cr3:
+    mov cr3, eax
+    mov eax, cr3
+    ret
 init_boot_pagging:
     ;save registers that will be used 
     push eax
@@ -54,15 +58,20 @@ init_boot_pagging:
 
     mov ecx, 0x100000
 
+; ebx: physical addr of kernel PD
+; ecx: the virtual address to map
+; edx: the physical address to map to
 _first_mb_loop:
     mov edx, ecx
     call _map_page ; Do the mapping
     sub ecx,  0x1000
     jnz _first_mb_loop ; not zero
+    mov edx, ecx
+    call _map_page
 
     ; ECX kernel_start EAX kernel_end
     mov ecx, KERNEL_BOOT_VMA
-    mov eax, _kernel_end
+    mov eax, _init_mem_end
     sub eax, KERNEL_HIGH_VMA
 
 _map_kernel_loop:

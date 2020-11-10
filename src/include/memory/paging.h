@@ -1,6 +1,11 @@
 #pragma once
 
 #include "ints.h"
+//     unsigned long pdindex = (unsigned long)virtualaddr >> 22;
+//     unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
+
+#define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
+#define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
 
 typedef union PageDirectory {
     u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
@@ -19,7 +24,7 @@ typedef union PageDirectory {
 }PageDirectory;
 
 typedef union PageTableEntry {
-    u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
+    u32 entry; // 4KiB aligned so 0xAAAAAA000 - 12bits always 0
     struct {
         u8 present:1; //1 bit 'obecności'
         u8 rw:1; // Read/Write
@@ -30,9 +35,18 @@ typedef union PageTableEntry {
         u8 dirt:1;
         u8 pat:1; // If the PAT is supported,
         u8 g:1; // Global; if CR4.PGE = 1
+        ////////////////////
         u8 free_space:3;
+        ////////////////////
         u32 address:20;
     }__attribute__((packed));
 } PageTableEntry;
 
+void P_Directory_Set_Entry(u32 index, const u32 *entry);
+u32 P_Directory_Get_Entry(u32 index);
+PageTableEntry * P_Get_TableEntry(u32 pd_index);
+
+
+
 void init_paging(void);
+void map_page(void * physaddr, void * virtualaddr, unsigned int flags);

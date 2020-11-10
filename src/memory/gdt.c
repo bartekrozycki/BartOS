@@ -26,6 +26,7 @@ void init_gdt(void) {
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0b11110010, 0b11001111); // user data 
                                                 // Covering 4GiB adddress space
 
+
 	gdt_load((u32) &gdt_ptr);
 
     print(SERIAL, "[Kernel] GDT Initalized.\n");

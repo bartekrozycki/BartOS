@@ -7,25 +7,26 @@
 #include "keyboard.h"
 #include "serial.h"
 #include "paging.h"
-#include "memory.h"
+#include "mem.h"
 #include "pit.h"
-
-extern u32 _kernel_end; 
-extern u32 _kernel_start;
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
 	if (mboot_magic != MULTIBOOT_EAX_MAGIC)
 		permahalt();
 
+	mboot_info = (MultibootInfo *)mboot_info;
+
 	init_serial();
 	init_terminal();
 
-	init_memory(mboot_info);
-	// init_paging();
-
 	init_gdt();
 	init_idt();
+
+	init_memory(mboot_info);
+
+	init_paging();
+
 
 	init_pit();
 	keyboard_init();

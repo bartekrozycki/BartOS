@@ -65,6 +65,7 @@ void isr_handler(InterruptSave is)
 	print(TERMINAL, "                          @@@  @@@\n");
 	
 	print(TERMINAL, "EXCEPTION: %s", exception_messages[is.int_num]);
+	print(TERMINAL, "\n%b", is.err);
 
     __asm__("xchgw %bx, %bx");
     permahalt();

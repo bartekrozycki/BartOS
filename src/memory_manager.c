@@ -1,4 +1,5 @@
 #include "memory_manager.h"
+#include "bitmap.h"
 
 #define KERNEL_BOOT_VMA 0x00100000
 #define KERNEL_HIGH_VMA 0xE0000000
@@ -25,11 +26,15 @@ u32 init_memory_manager(MultibootInfo* mbi)
     
     Manager.Stack.size_in_bytes = (FRAMES_COUNT << 5); // mul 32
     Manager.Stack.address = (memory_stack *) ke_alloc(Manager.Stack.size_in_bytes);
+    Manager.Stack.ptr = (Manager.Stack.address + Manager.Stack.size_in_bytes - sizeof(memory_stack));
+    Manager.Stack.free = 0;
 
     Manager.Pagging.PD_address = (PageDirectory *) ke_alloc(sizeof(PageDirectory) * 1024);
 
-    initial_kernel_paging();
+    initial_kernel_paging(); 
 
+    //pagin enabled from now, so now i can use functionality from higher kernel
+    
     return 0;
 }
 
@@ -78,7 +83,6 @@ void enablePaging(PageDirectory* pd_addr)
     __asm__ ("movl %eax, %cr0");
 }
 
-
 /**
  * Identy maping from 0x0 to KERNEL_END
  * Maping KERNEL_HIGH_VMA ---> KERNEL_BOOT_VMA
@@ -118,4 +122,9 @@ void initial_kernel_paging()
         Manager.Pagging.PD_address[(KERNEL_HIGH_VMA >> 22) + i].entry = ((u32) (tab + (0x1000 * i))) | 0x1;
 
     enablePaging(Manager.Pagging.PD_address);
+}
+
+void init_physical(MultibootInfo* mbi)
+{
+    
 }

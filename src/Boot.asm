@@ -1,11 +1,9 @@
 global _start:function (_start.end - _start)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;; link.ld
+global gdt_load
+global load_idt
 
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 extern init_memory_manager
 extern permahalt
@@ -19,7 +17,7 @@ INITSTACKSIZE	equ	0x8000 ; 1MiB
 
 section .data
     align 0x1000
-    kernel_stack            times INITSTACKSIZE         db 0
+    kernel_stack times INITSTACKSIZE db 0
 
 section .text
 multiboot_header:
@@ -27,14 +25,6 @@ multiboot_header:
     dd	MAGIC
     dd	FLAGS
     dd	CHKSUM
-;
-;   0x0 - 0x100000 identy mapped
-;
-;   0x100000 [0xe0100000] <- kernel start
-;   ....
-;   (x)      <- kernel_end
-;   0x400000 [0xe0400000] <- kernel init mem end
-
 
 _start:
 
@@ -45,8 +35,8 @@ mov esp, kernel_stack
 add esp, INITSTACKSIZE
 sub esp, KERNEL_HIGH_VMA
 
-push ebx
-push eax
+push ebx ; mbi struct
+push eax ; magic
 
 push ebx
 call init_memory_manager
@@ -55,9 +45,6 @@ pop ebx
 cmp eax, 0
 jne _start.perm ; if status code != 0 permahalt
 
-xchg bx, bx
-
-
 call Main
 
 .perm:      ; shithappend
@@ -65,3 +52,21 @@ call Main
     hlt
 
 .end:
+gdt_load:
+    mov	eax, [esp + 4]
+    lgdt	[eax]
+    ; code segment 0x8 -> 0x8 * 8 = 64B offset
+    jmp	0x8:.reload_cs
+.reload_cs:
+    mov ax, 0x10
+    mov	ds, ax
+    mov	es, ax
+    mov	fs, ax
+    mov	gs, ax
+    mov	ss, ax
+    ret
+
+load_idt: 
+	mov edx, [esp + 4]
+	lidt [edx]
+	ret

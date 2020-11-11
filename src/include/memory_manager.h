@@ -2,14 +2,9 @@
 #include "ints.h"
 #include "multiboot.h"
 #include "paging.h"
+#include "mStack.h"
 
 extern u8 *_kernel_end;
-
-typedef struct memory_stack
-{
-    u32 *address;
-    u32 *next;
-}memory_stack;
 
 typedef struct MManager
 {
@@ -20,6 +15,8 @@ typedef struct MManager
 
     struct {
         memory_stack *address;
+        memory_stack *ptr;
+        u32 free;
         u32 size_in_bytes;
     } Stack;
 
@@ -39,3 +36,5 @@ u8* ke_alloc(u32 size);
 
 void initial_kernel_paging();
 void enablePaging(PageDirectory* pd_addr);
+
+void init_physical(MultibootInfo* mbi);

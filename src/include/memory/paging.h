@@ -7,9 +7,6 @@
 #define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
 #define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
 
-#define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
-#define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
-
 typedef union PageDirectory {
     u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
     struct {

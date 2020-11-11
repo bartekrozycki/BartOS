@@ -137,10 +137,3 @@ __isr__:
     sti ;enable interrupts
 
 iret
-
-global load_idt
-; Interrupts has been blocked in (Boot.asm):31
-load_idt: 
-	mov edx, [esp + 4]
-	lidt [edx]
-	ret

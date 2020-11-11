@@ -7,21 +7,26 @@
 #include "keyboard.h"
 #include "serial.h"
 #include "pit.h"
+#include "palloc.h"
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 {
 	if (mboot_magic != MULTIBOOT_EAX_MAGIC)
 		permahalt();
 
-	mboot_info = (MultibootInfo *)mboot_info;
+	mboot_info = (MultibootInfo *)mboot_info; //unsed 
 
-	init_serial();
 	init_terminal();
 
 	init_gdt();
 	init_idt();
 
 	keyboard_init();
+
+	u32* ptr = kalloc();
+	print(TERMINAL, "Allocated: %p\n", ptr);
+	kfree((u32)ptr + 1);
+	print(TERMINAL, "Free /\\");
 
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");

@@ -17,7 +17,11 @@ PageStatus bitmap_get(u32 n)
 
 /**
  * @param n page number
- * @param status ennumerable page status
+ * @param status     
+ * FREE = 0,
+ * ALLOCATED,
+ * SYSTEM,
+ * HOLE
  */
 void bitmap_set(u32 n, PageStatus status)
 {

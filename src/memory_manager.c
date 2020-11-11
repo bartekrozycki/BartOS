@@ -1,9 +1,12 @@
 #include "memory_manager.h"
+#include "print.h"
 #include "bitmap.h"
+#include "serial.h"
 
 #define KERNEL_BOOT_VMA 0x00100000
 #define KERNEL_HIGH_VMA 0xE0000000
 
+#define FRAME_N(address) (address >> 12)
 #define FRAMES_COUNT (Manager.Memory.HighestAddress >> 12)
 #define ALIGN_TO(x,mask) (((x) + (mask) - 1) & ~((mask) - 1))
 
@@ -24,14 +27,18 @@ u32 init_memory_manager(MultibootInfo* mbi)
     Manager.Bitmap.size_in_bytes = (FRAMES_COUNT >> 2); // div 0x4
     Manager.Bitmap.address = ke_alloc(Manager.Bitmap.size_in_bytes);
     
-    Manager.Stack.size_in_bytes = (FRAMES_COUNT << 5); // mul 32
+    Manager.Stack.size_in_bytes = (FRAMES_COUNT << 3); // mul 8 (sizeof memorystack)
     Manager.Stack.address = (memory_stack *) ke_alloc(Manager.Stack.size_in_bytes);
-    Manager.Stack.ptr = (Manager.Stack.address + Manager.Stack.size_in_bytes - sizeof(memory_stack));
+    Manager.Stack.ptr = (((u8 *) Manager.Stack.address) + Manager.Stack.size_in_bytes - sizeof(memory_stack));
     Manager.Stack.free = 0;
 
     Manager.Pagging.PD_address = (PageDirectory *) ke_alloc(sizeof(PageDirectory) * 1024);
 
     initial_kernel_paging(); 
+	init_serial();
+    
+    // setup bitmap&stack
+    init_physical(mbi);
 
     //pagin enabled from now, so now i can use functionality from higher kernel
     
@@ -53,7 +60,8 @@ u32 get_highest_adrress(MultibootInfo* mbi)
 }
 
 /**
- * Space after kernel end, all values in created block is 0, aligned to 0x1000
+ * `Kernel End Alloc`
+ * All values in created block is 0, aligned to 0x1000
  * @param size length in bytes u need
  * @return address of block
  */
@@ -65,7 +73,8 @@ u8* ke_alloc(u32 size)
     for (u8* i = (u8 *)addr, 
             *j = (u8 *)(addr + size); i < j; i++) *i = 0;  
 
-    Manager.Memory.KernelEndAddress += size;
+    Manager.Memory.KernelEndAddress = (u32) ((u8 *) Manager.Memory.KernelEndAddress + size);
+
     return addr;
 }
 
@@ -126,5 +135,21 @@ void initial_kernel_paging()
 
 void init_physical(MultibootInfo* mbi)
 {
+    MultibootMemoryMap 	*mmap = (MultibootMemoryMap *) mbi->mmap_address;
     
+    while ((u32) mmap < (mbi->mmap_address + mbi->mmap_length))
+    {
+        if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
+            for (u32 ptr = mmap->baselow, end = mmap->baselow + mmap->lenlow; ptr < end; ptr += 0x1000)
+                bitmap_set(FRAME_N(ptr), SYSTEM);
+        mmap = (MultibootMemoryMap *)((u32)mmap + mmap->size + sizeof(mmap->size));
+    }
+
+    for (u32 ptr = KERNEL_BOOT_VMA; ptr < Manager.Memory.KernelEndAddress; ptr += 0x1000)
+        bitmap_set(FRAME_N(ptr), SYSTEM);
+
+    for (u32 ptr = 0x0; ptr < Manager.Memory.HighestAddress; ptr += 0x1000)
+        if (bitmap_get(FRAME_N(ptr)) == FREE)
+            ms_push((u32 *)ptr);
+
 }

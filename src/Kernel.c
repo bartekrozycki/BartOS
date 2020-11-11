@@ -6,7 +6,6 @@
 #include "print.h"
 #include "keyboard.h"
 #include "serial.h"
-#include "paging.h"
 #include "pit.h"
 
 void Main(u32 mboot_magic, MultibootInfo* mboot_info)

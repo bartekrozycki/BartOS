@@ -41,11 +41,14 @@ push ebx
 push eax
 
 push ebx
-
 call init_memory_manager
+pop ebx
 
 cmp eax, 0
 jne _start.perm ; if status code != 0 permahalt
+
+xchg bx, bx
+
 
 call Main
 

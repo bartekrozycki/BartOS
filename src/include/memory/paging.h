@@ -7,6 +7,9 @@
 #define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
 #define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
 
+#define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
+#define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
+
 typedef union PageDirectory {
     u32 entry; // 4KiB aligned so 0x1000 - 12bits always 0
     struct {
@@ -41,12 +44,3 @@ typedef union PageTableEntry {
         u32 address:20;
     }__attribute__((packed));
 } PageTableEntry;
-
-void P_Directory_Set_Entry(u32 index, const u32 *entry);
-u32 P_Directory_Get_Entry(u32 index);
-PageTableEntry * P_Get_TableEntry(u32 pd_index);
-
-
-
-void init_paging(void);
-void map_page(void * physaddr, void * virtualaddr, unsigned int flags);

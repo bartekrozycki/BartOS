@@ -27,6 +27,14 @@ multiboot_header:
     dd	MAGIC
     dd	FLAGS
     dd	CHKSUM
+;
+;   0x0 - 0x100000 identy mapped
+;
+;   0x100000 [0xe0100000] <- kernel start
+;   ....
+;   (x)      <- kernel_end
+;   0x400000 [0xe0400000] <- kernel init mem end
+
 
 _start:
 

@@ -21,6 +21,11 @@ void Main(u32 mboot_magic, MultibootInfo* mboot_info)
 	init_gdt();
 	init_idt();
 
+	init_memory(mboot_info);
+
+	init_paging();
+
+
 	init_pit();
 	keyboard_init();
 

@@ -1,6 +1,11 @@
 #pragma once
 
 #include "ints.h"
+//     unsigned long pdindex = (unsigned long)virtualaddr >> 22;
+//     unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
+
+#define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
+#define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )
 
 #define __PdIndex__(x) ( ( (unsigned long int) x) >> 22 )
 #define __PtIndex__(x) ( ( (unsigned long int) x) >> 12 & 0x3FF )

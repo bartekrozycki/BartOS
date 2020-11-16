@@ -7,18 +7,21 @@
 #include "keyboard.h"
 #include "serial.h"
 #include "pit.h"
+#include "palloc.h"
 
 void Main(MultibootInfo* mboot_info)
 {
-	mboot_info = (MultibootInfo *)mboot_info;
-
-	init_serial();
 	init_terminal();
 
 	init_gdt();
 	init_idt();
 
 	keyboard_init();
+
+	u32* ptr = kalloc();
+	print(TERMINAL, "Allocated: %p\n", ptr);
+	kfree((u32)ptr + 1);
+	print(TERMINAL, "Free /\\");
 
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");

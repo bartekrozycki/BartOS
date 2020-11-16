@@ -15,10 +15,11 @@ void init_memory(MultibootInfo *mbi, u32 *kernel_start, u32 *kernel_end);
 
 u32 get_highest_adrress(MultibootInfo* mbi, u32 *ret);
 u32 ke_alloc(u32* end, u32 size);
+void clearSpace(u8* address, u32 len);
 
 
 void initial_kernel_paging(u32 * ke, PageDirectory *pd, MultibootInfo *mbi);
 
 
-void map(u32 *ke, PageDirectory * pd, u32 physaddr, u32 virtualaddr);
+void kmap(PageDirectory * pd, u32 physaddr, u32 virtualaddr);
 void enablePaging(PageDirectory* pd_addr);

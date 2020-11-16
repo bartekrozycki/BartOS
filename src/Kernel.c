@@ -9,16 +9,15 @@
 #include "pit.h"
 #include "kalloc.h"
 
+
 void Main(MultibootInfo* mboot_info)
 {
-
-
-
-	init_terminal();
+	mboot_info = (MultibootInfo *) mboot_info;////////////////
 
 	init_gdt();
 	init_idt();
 
+	init_terminal();
 	keyboard_init();
 
 	// u32* ptr = kalloc();

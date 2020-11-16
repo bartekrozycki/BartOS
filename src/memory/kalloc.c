@@ -6,7 +6,7 @@
 void *kalloc()
 {
     u32 x = (u32) ms_pop();
-    bitmap_set(PAGE(x), ALLOCATED);
+    bitmap_set(PAGE(x), SYSTEM);
     return (void *) x;
 }
 /**

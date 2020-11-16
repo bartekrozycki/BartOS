@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ints.h"
+
 //     unsigned long pdindex = (unsigned long)virtualaddr >> 22;
 //     unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
 
@@ -41,3 +42,7 @@ typedef union PageTableEntry {
         u32 address:20;
     }__attribute__((packed));
 } PageTableEntry;
+
+
+void init_paging(PageDirectory *pd);
+void remap(u32 virtual_old, u32 virtual_new);

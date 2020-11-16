@@ -5,7 +5,7 @@ global load_idt
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
 
-extern memory_manager
+extern boot_init_mem
 
 ; Contstants for Multiboot
 FLAGS	        equ	11b
@@ -36,7 +36,7 @@ sub esp, KERNEL_HIGH_VMA
 push ebx ; mbi struct
 push eax ; magic
 
-call memory_manager
+call boot_init_mem
 
 .perm:      ; shithappend
     cli

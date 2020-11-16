@@ -9,7 +9,7 @@ SECTIONS
 
 	.boot ALIGN(4K) : { 
 		*/Boot.o (.text)
-		*/memory_manager.o (.*)
+		*/boot_memory_init.o (.*)
 		. = ALIGN(0x1000);
 	}  
 
@@ -19,17 +19,17 @@ SECTIONS
 
 	.text ALIGN(4K) : AT( ADDR(.text) - KERNEL_HIGH_VMA)
 	{
-		*(EXCLUDE_FILE (*/Boot.o */memory_manager.o) .text)
-		*(EXCLUDE_FILE (*/memory_manager.o) .rodata)
+		*(EXCLUDE_FILE (*/Boot.o */boot_memory_init.o) .text)
+		*(EXCLUDE_FILE (*/boot_memory_init.o) .rodata)
 	}
 	.data ALIGN(4K) : AT( ADDR(.data) - KERNEL_HIGH_VMA)
 	{
-		*(EXCLUDE_FILE (*/memory_manager.o) .data)
+		*(EXCLUDE_FILE (*/boot_memory_init.o) .data)
 	}
 	.bss ALIGN(4K) : AT( ADDR(.bss) - KERNEL_HIGH_VMA)
 	{
-		*(EXCLUDE_FILE (*/memory_manager.o) COMMON)
-		*(EXCLUDE_FILE (*/memory_manager.o) .bss)
+		*(EXCLUDE_FILE (*/boot_memory_init.o) COMMON)
+		*(EXCLUDE_FILE (*/boot_memory_init.o) .bss)
 		. = ALIGN(0x1000);
 	}
 	_kernel_end = .;

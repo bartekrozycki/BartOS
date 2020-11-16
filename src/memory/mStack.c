@@ -1,29 +1,27 @@
-// #include "mStack.h"
-// #include "memory_manager.h"
-// #include "system.h"
+#include "mStack.h"
 
-// extern MManager Manager;
+static u32 * stack_start;
+static u32 * stackpointer;
+/**
+ * @param address Address of bitmap
+ */
+void init_stack(u32* address)
+{
+    stack_start = address;
+    stackpointer = address;
+}
 
-// void ms_push(u32* address)
-// {
-//     if (Manager.Stack.ptr <= Manager.Stack.address)
-//         permahalt();
+void ms_push(u32* address)
+{
+    *++stackpointer = (u32) address;
+}
 
-//     memory_stack *next = Manager.Stack.ptr - sizeof(memory_stack);
-//     next->address = address;
-//     next->next = (u32 *)Manager.Stack.ptr;
-
-//     ++Manager.Stack.free;
-//     Manager.Stack.ptr = next;
-// }
-
-// u32* ms_pop()
-// {
-//     if (!Manager.Stack.free)
-//         permahalt(); // TODO out of memory
-
-//     u32 *addr = Manager.Stack.ptr->address;
-//     Manager.Stack.ptr += sizeof(memory_stack);
-//     --Manager.Stack.free;
-//     return addr;
-// }
+u32* ms_pop()
+{
+    if (stackpointer == stack_start) return 0x0;
+    return (u32 *) *(stackpointer--);
+}
+u32 ms_freePages()
+{
+    return (stackpointer - stack_start);
+}

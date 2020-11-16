@@ -30,7 +30,7 @@ void terminal_cursor_enable(uint8_t cursor_start, uint8_t cursor_end)
 }
 
 void init_terminal(void)
-{
+{    
     terminal_pos_row = 0;
     terminal_pos_col = 0;
     terminal_color   = TERMINAL_COLOR_DOS_DEFAULT;

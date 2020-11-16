@@ -7,10 +7,13 @@
 #include "keyboard.h"
 #include "serial.h"
 #include "pit.h"
-#include "palloc.h"
+#include "kalloc.h"
 
 void Main(MultibootInfo* mboot_info)
 {
+
+
+
 	init_terminal();
 
 	init_gdt();

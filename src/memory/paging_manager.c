@@ -13,15 +13,15 @@ static inline void invlpg(const void* m)
 
 void init_paging(PageDirectory *pd)
 {
-    // directory = pd;
+    directory = pd;
 
-    // remap((u32)directory, KERNEL_STRUCTURES_SPACE);
-    // __asm__("xchgw %bx, %bx");
-    // directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
-    // for (u32 i = 0; i < 1024; i++)
-    //     remap((u32)(directory[i].address << 12), KERNEL_STRUCTURES_SPACE + (0x1000 * i + 0x1000));
+    remap((u32)directory, KERNEL_STRUCTURES_SPACE);
+    __asm__("xchgw %bx, %bx");
+    directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
+    for (u32 i = 0; i < 1024; i++)
+        remap((u32)(directory[i].address << 12), KERNEL_STRUCTURES_SPACE + (0x1000 * i + 0x1000));
     
-    // __asm__("xchgw %bx, %bx");
+    __asm__("xchgw %bx, %bx");
 
 }
 u32 getPhysicalAddress(u32 virtualaddr)
@@ -53,17 +53,17 @@ void remap(u32 virtual_old, u32 virtual_new)
     PageTableEntry *oldentry = (PageTableEntry *) (directory[old_pd].address << 12);
     if (!oldentry[old_pt].present) permahalt();
 
-    u32 entry = oldentry[old_pt].entry;
-    oldentry[old_pt].entry = 0;
+    u32 entry = oldentry[old_pt].address << 12;
 
     if (!directory[new_pd].present)
         directory[new_pd].present = 1;
 
-    PageTableEntry *newentry = (PageTableEntry *) (directory[new_pt].address << 12);
-    newentry[old_pt].entry = entry;
+    PageTableEntry *newentry = (PageTableEntry *) (directory[new_pd].address << 12);
+    
+    print(SERIAL, "xd > %p\n", entry);
 
-    invlpg(virtual_old);
-    invlpg(virtual_new);
+    newentry[new_pt].entry = entry | 0x1;
+    invlpg(virtual_new);    
 }
 void map(u32 physaddr, u32 virtualaddr)
 {

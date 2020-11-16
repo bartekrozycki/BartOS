@@ -1,7 +1,9 @@
 AS        = nasm
 ASFLAGS   = -f elf32
 
-CC	= i386-elf-gcc
+CROSS = ~/opt/cross/bin
+
+CC	= $(CROSS)/i686-elf-gcc
 CFLAGS	= -ffreestanding -nostdlib -nostdinc
 CFLAGS	+= -Wall -Wextra -std=c99 -O0 -g
 CFLAGS	+= -Isrc/include
@@ -10,9 +12,9 @@ CFLAGS	+= -Isrc/include/drivers
 CFLAGS	+= -Isrc/include/memory
 CFLAGS	+= -Isrc/include/interrupts
 
-
+LD		  = $(CROSS)/i686-elf-ld
 LINKER    = link.ld
-LDFLAGS   = -T $(LINKER) -melf_i386
+LDFLAGS   = -T $(LINKER)
 
 ISO       = os.iso
 KERNEL    = kernel.bin
@@ -38,7 +40,7 @@ ${ISO}: ${KERNEL}
 
 ${KERNEL}: $(OBJS) $(LINKER)
 	$(info Linking object files)
-	@ld $(LDFLAGS) $(OBJS) -o $@
+	@$(LD) $(LDFLAGS) $(OBJS) -o $@
 
 %.o:%.asm
 	$(info [Compiling ASM] $^)

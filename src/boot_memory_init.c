@@ -33,7 +33,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo* mbi)
     u32* stack      = (u32 *) ke_alloc(&kernel_end, memory_stack_size);
     u32* page_dir   = (u32 *) ke_alloc(&kernel_end, sizeof(PageDirectory) * 0x400);
 
-    initial_kernel_paging(&kernel_end, (PageDirectory* ) page_dir, mbi); 
+    initial_kernel_paging(&kernel_end, (PageDirectory *) page_dir, mbi); 
 
     init_stack(stack); 
     init_bitmap(bitmap);
@@ -104,15 +104,15 @@ void initial_kernel_paging(u32 * ke, PageDirectory *pd, MultibootInfo *mbi)
             }
         }
     }
-    map(ke, pd, (u32) mbi, (u32) mbi);
+    map(ke, pd, (u32) mbi, (u32) mbi); // map mbi
 
     for (u32 i = KERNEL_BOOT_VMA; i < (u32)*ke; i += 0x1000)
     {
         map(ke, pd, i, i);
         map(ke, pd, i, 0xE0000000 + i);
     }
-    map(ke, pd, 0xB8000, 0xF0001000); // wideło
-
+    map(ke, pd, 0xB8000, 0xB8000); // wideło
+    
     enablePaging(pd);
 }
 /**
@@ -129,8 +129,8 @@ void map(u32 *ke, PageDirectory * pd, u32 physaddr, u32 virtualaddr)
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
         permahalt();
 
-    unsigned long pdindex = (unsigned long)virtualaddr >> 22;
-    unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
+    u32 pdindex = (u32) virtualaddr >> 22;
+    u32 ptindex = (u32)virtualaddr >> 12 & 0x03FF;
     
     if (!((PageDirectory *)pd)[pdindex].present)
     {
@@ -140,9 +140,8 @@ void map(u32 *ke, PageDirectory * pd, u32 physaddr, u32 virtualaddr)
     }
     PageTableEntry *pt = (PageTableEntry *) (((PageDirectory *)pd)[pdindex].address << 12);
 
-    pt[ptindex].entry = ((unsigned long)physaddr) | 0x01; // Present
+    pt[ptindex].entry = ((u32)physaddr) | 0x01; // Present
 }
-
 /**
  * @param mbi Multiboot Sctructure
  * @param kernel_start pointer to variable with kernel_start address

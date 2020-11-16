@@ -2,6 +2,6 @@
 
 #include "memory_manager.h"
 
-void *kalloc();
-void *kfree(void *x);
+// void *kalloc();
+// void *kfree(void *x);
 

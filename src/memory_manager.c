@@ -12,23 +12,6 @@
 
 extern void Main(MultibootInfo* mboot_info);
 
-/*
- *
- *  0xE0000000 KERNEL
- *  0xE8000000 HEAP
- *  0xF0000000 DRIVERS
- *      
- *      0xF000_0000 drivers_info
- *      0xF000_1000 video memory
- *      0xF000_2000 video memory
- *      0xF000_3000 video memory
- *      0xF000_4000 video memory
- *      
- * 
- * 
- *  0xF8000000 xxx
- * 
- */
 
 /**
  * @param mbi Multiboot structure address
@@ -114,6 +97,23 @@ void enablePaging(PageDirectory* pd_addr)
     __asm__ ("movl %eax, %cr0");
 }
 
+/*
+ *
+ *  0xE0000000 KERNEL
+ *  0xE8000000 HEAP
+ *  0xF0000000 DRIVERS
+ *      
+ *      0xF000_0000 drivers_info
+ *      0xF000_1000 video memory
+ *      0xF000_2000 video memory
+ *      0xF000_3000 video memory
+ *      0xF000_4000 video memory
+ *      
+ * 
+ * 
+ *  0xF8000000 xxx
+ * 
+ */
 /**
  * @param ke Kernel end adderss
  * @param pd Page directory
@@ -126,7 +126,7 @@ void initial_kernel_paging(u32 * ke, PageDirectory *pd)
     for (u32 i = KERNEL_BOOT_VMA; i < (u32)*ke; i += 0x1000)
         map(ke, pd, i, 0xE0000000 + i);
 
-    map(ke, pd, 0xB8000, 0xB8000); // wideło
+    map(ke, pd, 0xB8000, 0xF0001000); // wideło
 
     enablePaging(pd);
 }

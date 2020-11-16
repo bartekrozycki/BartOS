@@ -18,10 +18,10 @@ void Main(MultibootInfo* mboot_info)
 
 	keyboard_init();
 
-	u32* ptr = kalloc();
-	print(TERMINAL, "Allocated: %p\n", ptr);
-	kfree((u32)ptr + 1);
-	print(TERMINAL, "Free /\\");
+	// u32* ptr = kalloc();
+	// print(TERMINAL, "Allocated: %p\n", ptr);
+	// kfree((u32)ptr + 1);
+	// print(TERMINAL, "Free /\\");
 
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");

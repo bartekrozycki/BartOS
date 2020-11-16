@@ -5,9 +5,7 @@ global load_idt
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
 
-extern init_memory_manager
-extern permahalt
-extern Main
+extern memory_manager
 
 ; Contstants for Multiboot
 FLAGS	        equ	11b
@@ -38,20 +36,15 @@ sub esp, KERNEL_HIGH_VMA
 push ebx ; mbi struct
 push eax ; magic
 
-push ebx
-call init_memory_manager
-pop ebx
-
-cmp eax, 0
-jne _start.perm ; if status code != 0 permahalt
-
-call Main
+call memory_manager
 
 .perm:      ; shithappend
     cli
     hlt
 
 .end:
+
+
 gdt_load:
     mov	eax, [esp + 4]
     lgdt	[eax]

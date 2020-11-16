@@ -8,11 +8,8 @@
 #include "serial.h"
 #include "pit.h"
 
-void Main(u32 mboot_magic, MultibootInfo* mboot_info)
+void Main(MultibootInfo* mboot_info)
 {
-	if (mboot_magic != MULTIBOOT_EAX_MAGIC)
-		permahalt();
-
 	mboot_info = (MultibootInfo *)mboot_info;
 
 	init_serial();

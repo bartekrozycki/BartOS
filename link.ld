@@ -1,14 +1,16 @@
 ENTRY(_start)
 
 KERNEL_BOOT_VMA = 0x00100000;
-KERNEL_HIGH_VMA = 0xE0000000; /* 3.5 GiB :D */
+KERNEL_HIGH_VMA = 0xE0000000; /* _kernel_start */
 
 SECTIONS
 {
 	. = KERNEL_BOOT_VMA;
-	.boot :{ 
+
+	.boot ALIGN(4K) : { 
 		*/Boot.o (.text)
 		*/memory_manager.o (.*)
+		. = ALIGN(0x1000);
 	}  
 
 	. += KERNEL_HIGH_VMA;

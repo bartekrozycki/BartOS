@@ -4,37 +4,19 @@
 #include "paging.h"
 #include "mStack.h"
 
-extern u8 *_kernel_end;
+extern u32 _kernel_start;
+extern u32 _kernel_end;
 
-typedef struct MManager
-{
-    struct {
-        u8 *address;
-        u32 size_in_bytes;
-    } Bitmap;
 
-    struct {
-        memory_stack *address;
-        memory_stack *ptr;
-        u32 free;
-        u32 size_in_bytes;
-    } Stack;
+void memory_manager(u32 mboot_magic, MultibootInfo* mbi);
 
-    struct {
-        PageDirectory * PD_address;
-    } Pagging;
+u32 get_highest_adrress(MultibootInfo* mbi, u32 *ret);
+u32 ke_alloc(u32* end, u32 size);
 
-    struct {
-        u32 KernelEndAddress;
-        u32 HighestAddress;
-    } Memory;
-} MManager;
+void initial_kernel_paging(u32 * ke, PageDirectory *pd);
+void map(u32 *ke, PageDirectory * pd, u32 physaddr, u32 virtualaddr);
 
-u32 init_memory_manager(MultibootInfo* mbi);
-u32 get_highest_adrress(MultibootInfo* mbi);
-u8* ke_alloc(u32 size);
-
-void initial_kernel_paging();
 void enablePaging(PageDirectory* pd_addr);
 
 void init_physical(MultibootInfo* mbi);
+

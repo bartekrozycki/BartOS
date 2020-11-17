@@ -33,8 +33,4 @@ SECTIONS
 		. = ALIGN(0x1000);
 	}
 	_kernel_end = .;
-
-	. += 3M - (_kernel_end - _kernel_start) - 0x1000;
-
-	_init_mem_end = .;
 }

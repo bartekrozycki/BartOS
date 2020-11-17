@@ -1,9 +1,14 @@
 global _start:function (_start.end - _start)
 global gdt_load
 global load_idt
+global permahalt
 
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
+
+extern _kernel_start
+extern _kernel_end
+
 
 extern boot_init_mem
 
@@ -33,18 +38,26 @@ mov esp, kernel_stack
 add esp, INITSTACKSIZE
 sub esp, KERNEL_HIGH_VMA
 
-push ebx ; mbi struct
+mov edx, _kernel_end
+sub edx, KERNEL_HIGH_VMA
+push edx
+mov edx, _kernel_start
+sub edx, KERNEL_HIGH_VMA
+push edx
+
+push ebx ; mbi
 push eax ; magic
 
 call boot_init_mem
 
-.perm:      ; shithappend
-    cli
-    hlt
+jmp permahalt
 
 .end:
 
-
+permahalt:
+    cli
+    hlt
+    
 gdt_load:
     mov	eax, [esp + 4]
     lgdt	[eax]

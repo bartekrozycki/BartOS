@@ -12,11 +12,6 @@
 
 #define PIC_EOI		0x20
 
-#define UNUSED(x) (void)(x)
-
-void kernel_panic(STREAM s, char *error);
-
-void permahalt(void);
 void int_wait_forever(void);
 void out(u16 port, u8 data);
 u8 in(u16 port);

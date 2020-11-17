@@ -1,6 +1,7 @@
 #include "IRQ_handlers.h"
 #include "system.h"
 #include "print.h"
+#include "kernel_panic.h"
 
 IrqCall calls[16];
 
@@ -67,8 +68,7 @@ void isr_handler(InterruptSave is)
 	print(TERMINAL, "EXCEPTION: %s", exception_messages[is.int_num]);
 	print(TERMINAL, "\n%b", is.err);
 
-    __asm__("xchgw %bx, %bx");
-    permahalt();
+    kPanic;
 }
 
 void irq_handler(InterruptSave is)

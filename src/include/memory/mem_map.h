@@ -2,8 +2,8 @@
 
 #include "ints.h"
 
-extern u32 _kernel_start;
-extern u32 _kernel_end;
+#define PAGE_DIRECTORY_SIZE 0x1000
+#define PAGE_TABLES_SPACE_SIZE 0x400000
 
 #define KERNEL_BOOT_VMA 0x00100000
 

@@ -47,8 +47,6 @@ void keyboard_init(void)
 
 void keyboard_interrupt(InterruptSave *is)
 {
-    UNUSED(is);
-    
     u8 scancode = in(0x60);
 
 	if (!(scancode & 0x80)) // else key relasedc

@@ -1,4 +1,5 @@
 #include "kalloc.h"
+#include "kernel_panic.h"
 
 /**
  * @return address of free page (0x1000)
@@ -14,7 +15,7 @@ void *kalloc()
  */
 void kfree(void *x)
 {
-    if ((u32)x & 0xFFF) kernel_panic(SERIAL, "KFREE addres not aligned to 0x1000");
+    if ((u32)x & 0xFFF) kPanic;
 
     ms_push((u32 *)x);
     bitmap_set(PAGE((u32)x), FREE);

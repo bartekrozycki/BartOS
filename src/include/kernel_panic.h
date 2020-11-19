@@ -1,6 +1,9 @@
 /*
     k e r n e l  p a n i c
 */
+
+#define BOCHS_BREAK __asm__("xchgw %bx, %bx")
+
 #define STR(x) #x
 #define STRINGIFY(x) STR(x)
 #define FILE_LINE __FILE__ ":" STRINGIFY(__LINE__)
@@ -20,6 +23,3 @@ static inline void k_panic(char *str)
 
     permahalt();
 }
-/*
-    e n d  k e r n e l  p a n i c
-*/

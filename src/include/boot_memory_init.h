@@ -9,10 +9,7 @@
 
 void boot_init_mem(u32 mboot_magic, MultibootInfo* mbi, u32 *kernel_start, u32 *kernel_end);
 void* ke_alloc(u32* end, u32 size);
-
-
 void map_at(PageDirectory * page_directory, void * physaddr, void * virtualaddr);
-void init_memory(MultibootInfo *mbi, u32 *kernel_start, u32 *kernel_end);
 
 static inline void clearSpace(void* address, u32 len)
 {
@@ -24,14 +21,13 @@ static inline void enablePaging(PageDirectory* pd_addr)
 {
     __asm__ ("movl %0, %%cr3": : "a"(pd_addr));
     __asm__ ("movl %cr0, %eax ");
+
     __asm__ ("movl $0x80000000, %ebx");
     __asm__ ("orl %ebx, %eax");
-
-    __asm__ ("movl %eax, KERNEL_HIGH_VMA");
-    __asm__ ("addl %esp, %eax");
-    __asm__ ("movl %esp, %eax");
-
     __asm__ ("movl %eax, %cr0");
+
+    __asm__ ("addl $KERNEL_HIGH_VMA, %esp");
+    
 }
 static inline u32 get_highest_adrress(MultibootInfo* mbi)
 {

@@ -2,4 +2,4 @@
 
 #include "paging.h"
 
-void init_heap(u32 * kernel_end, PageDirectory *directory);
+void init_heap();

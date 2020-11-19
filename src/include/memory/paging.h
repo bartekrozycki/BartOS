@@ -43,6 +43,11 @@ typedef union PageTableEntry {
     }__attribute__((packed));
 } PageTableEntry;
 
-
 void init_paging(PageDirectory *pd);
 void remap(u32 virtual_old, u32 virtual_new);
+
+// Source: https://wiki.osdev.org/Inline_Assembly/Examples
+static inline void invlpg(const void* m)
+{
+    __asm__( "invlpg (%0)" : : "b"(m) : "memory" );
+}

@@ -2,6 +2,7 @@
 
 #include "ints.h"
 
+
 #define PAGE_DIRECTORY_SIZE 0x1000
 #define PAGE_TABLES_SPACE_SIZE 0x400000
 
@@ -13,4 +14,5 @@
 #define HEAP_MIB_SPACE 64
 
 #define DRIVERS_SPACE 0xF0000000
+
 #define KERNEL_STRUCTURES_SPACE 0xF8000000

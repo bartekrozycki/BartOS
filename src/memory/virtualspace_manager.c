@@ -4,24 +4,11 @@
 #include "mem_map.h"
 #include "kalloc.h"
 
-static PageDirectory *directory;
-
-static inline void invlpg(const void* m)
-{
-    __asm__( "invlpg (%0)" : : "b"(m) : "memory" );
-}
+static PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
 void init_paging(PageDirectory *pd)
 {
-    // directory = pd;
 
-    // remap((u32)directory, KERNEL_STRUCTURES_SPACE);
-    // __asm__("xchgw %bx, %bx");
-    // directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
-    // for (u32 i = 0; i < 1024; i++)
-    //     remap((u32)(directory[i].address << 12), KERNEL_STRUCTURES_SPACE + (0x1000 * i + 0x1000));
-    
-    // __asm__("xchgw %bx, %bx");
 
 }
 u32 getPhysicalAddress(u32 virtualaddr)
@@ -61,7 +48,7 @@ void remap(u32 virtual_old, u32 virtual_new)
     PageTableEntry *newentry = (PageTableEntry *) (directory[new_pd].address << 12);
 
     newentry[new_pt].entry = entry | 0x1;
-    invlpg(virtual_new);    
+    invlpg((const u32 *)virtual_new);    
 }
 void map(u32 physaddr, u32 virtualaddr)
 {

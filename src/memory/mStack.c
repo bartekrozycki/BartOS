@@ -2,10 +2,8 @@
 
 static u32 * stack_start;
 static u32 * stackpointer;
-/**
- * @param address Address of bitmap
- */
-void init_stack(u32* address)
+
+void setMStackAdress(u32 *address)
 {
     stack_start = address;
     stackpointer = address;

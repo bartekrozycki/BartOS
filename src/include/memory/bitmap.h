@@ -1,10 +1,12 @@
 #pragma once
 
 #include "multiboot.h"
-#include "boot_memory_init.h"
+#include "paging.h"
 #include "ints.h"
 
 #define PAGE(n) ((n) >> 12)
+
+void setBitmapAddress(u32 *address);
 
 typedef enum PageStatus {
     FREE = 0,

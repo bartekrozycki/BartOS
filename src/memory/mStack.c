@@ -1,4 +1,5 @@
 #include "mStack.h"
+#include "kernel_panic.h"
 
 static u32 * stack_start;
 static u32 * stackpointer;
@@ -16,7 +17,8 @@ void ms_push(u32* address)
 
 u32* ms_pop()
 {
-    if (stackpointer == stack_start) return 0x0;
+    if (stackpointer == stack_start) kPanic;
+    
     return (u32 *) *(stackpointer--);
 }
 u32 ms_freePages()

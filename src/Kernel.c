@@ -16,8 +16,6 @@ void Main(MultibootInfo *mboot_info)
 	init_gdt();
 	init_idt();
 
-	__asm__("xchgw %bx, %bx");
-
 	// print(TERMINAL, "\n  ____             _    ____   _____ \n");
 	// print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");
 	// print(TERMINAL, " | |_) | __ _ _ __| |_| |  | | (___  \n");

@@ -2,12 +2,12 @@
 #include "mStack.h"
 #include "bitmap.h"
 #include "kernel_panic.h"
+#include "print.h"
 #include "multiboot.h"
 
 void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end)
 {
     bitmap_set((u32)mbi >> 12, SYSTEM);
-    BOCHS_BREAK;
     for (MultibootMemoryMap *mmap = (MultibootMemoryMap *)mbi->mmap_address;
          (u32)mmap < (mbi->mmap_address + mbi->mmap_length);
          mmap = (MultibootMemoryMap *)((u32)mmap + mmap->size + sizeof(mmap->size)))
@@ -22,16 +22,15 @@ void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end)
                 }
                 else
                 {
-                    BOCHS_BREAK;
                     bitmap_set((u32)((mmap->baselow + i) >> 12), SYSTEM);
                 }
             }
+
         }
-        else if (mmap->type == MULTIBOOT_MMAP_RESERVED)
+        else if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
         {
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
             {
-                BOCHS_BREAK;
                 bitmap_set((u32)((mmap->baselow + i) >> 12), SYSTEM);
             }
         }

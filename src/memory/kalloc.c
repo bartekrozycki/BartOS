@@ -17,23 +17,14 @@ void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end)
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
             {
                 if (((mmap->baselow + i) < kernel_start) || ((mmap->baselow + i) >= kernel_end))
-                {
                     ms_push((u32 *)(mmap->baselow + i));
-                }
                 else
-                {
                     bitmap_set((u32)((mmap->baselow + i) >> 12), SYSTEM);
-                }
             }
-
         }
         else if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
-        {
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
-            {
                 bitmap_set((u32)((mmap->baselow + i) >> 12), SYSTEM);
-            }
-        }
     }
 }
 /**

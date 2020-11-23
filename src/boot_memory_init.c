@@ -43,7 +43,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
     clearSpace(page_table_space, PAGE_TABLES_SPACE_SIZE);
 
     // TODO unmap 0x100000 < kernlEnd in high kernel
-    for (u32 i = KERNEL_BOOT_VMA; i < kernelEnd; i += 0x1000)
+    for (u32 i = KERNEL_BOOT_VMA; i < kAllocSpace; i += 0x1000)
         map_at(page_directory, (u32 *)i, (u32 *)i);
     ///////////////////////////////////////////////////////
 
@@ -95,22 +95,22 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
                 map_at(page_directory, (u32 *)(mmap->baselow + i), (u32 *)(mmap->baselow + i));
     }
 
+    map_at(page_directory, 0xb8000, 0xb8000);
+
     enablePaging(page_directory);
     init_serial();
 
+    print(SERIAL, "PD: %p\n", page_directory);
+    print(SERIAL, "PTE[1024]: %p\n", page_table_space);
 
     setBitmapAddress((u32 *)mem_bitmap_ptr);
-    print(SERIAL, "BITMAP: %p size %d\n", mem_bitmap_ptr, mem_bitmap_bytes);
     print(SERIAL, "BITMAP: %p size %d\n", mem_bitmap_ptr, ALIGN_TO(mem_bitmap_bytes, 0x1000));
     
     setMStackAdress((u32 *)mem_stack_ptr);
-    print(SERIAL, "Stack %p size %d\n", mem_stack_ptr, mem_stack_bytes);
     print(SERIAL, "Stack %p size %d\n", mem_stack_ptr, ALIGN_TO(mem_stack_bytes, 0x1000));
-    print(SERIAL, "Kernel space from %p to %p\n", KERNEL_BOOT_VMA, kAllocSpace);
-
-    BOCHS_BREAK;
 
     init_kalloc(mbi, (u32)KERNEL_BOOT_VMA, kAllocSpace);
+    print(SERIAL, "Kernel space from %p to %p\n", KERNEL_BOOT_VMA, kAllocSpace);
 
     Main(mbi);
 

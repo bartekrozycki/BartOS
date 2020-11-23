@@ -3,14 +3,50 @@
 #include "boot_memory_init.h"
 #include "mem_map.h"
 #include "kalloc.h"
+#include "IRQ_handlers.h"
+#include "print.h"
 
-static PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
+PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
-void init_paging(PageDirectory *pd)
+const char *page_fault_messages[8] = {
+    "Supervisory process tried to read a non-present page entry",
+    "Supervisory process tried to read a page and caused a protection fault",
+    "Supervisory process tried to write to a non-present page entry",
+    "Supervisory process tried to write a page and caused a protection fault",
+    "User process tried to read a non-present page entry",
+    "User process tried to read a page and caused a protection fault",
+    "User process tried to write to a non-present page entry",
+    "User process tried to write a page and caused a protection fault"
+};
+
+static void pageFault(InterruptSave *is)
 {
+    u32 *cr2_value = 0xDEADBEEF;
+    __asm__ ("movl %%cr2, %0": "=r"(cr2_value) : );
 
-
+    print(SERIAL, "\n---====[ Detected page fault.\n");
+    print(SERIAL, "Error code: %b\nError Message: %s\nInfo CR2: %p\n", is->err, page_fault_messages[is->err], cr2_value);
+    print(SERIAL, "Info EAX %p\nInfo EBX %p\nInfo ECX %p\nInfo EDX %p\nInfo ESP %p\nInfo EBP %p\nInfo ESI %p\nInfo EDI %p\n", 
+                    is->eax, is->ebx, is->ecx, is->edx, is->esp, is->ebp, is->esi, is->edi);
+    print(SERIAL, "Info EIP %p\nInfo CS %p\nInfo EFLAGS %p\nInfo USER_ESP %p\nInfo SS %p\n", 
+                    is->eip, is->cs, is->eflags, is->useresp, is->ss);
+    print(SERIAL, "]====---\n");
 }
+
+void init_paging()
+{
+    u32 pd_index = KERNEL_BOOT_VMA >> 22;
+
+    isr_new_call(14, pageFault);
+}
+
+
+// Source: https://wiki.osdev.org/Inline_Assembly/Examples
+static inline void invlpg(const void* m)
+{
+    __asm__( "invlpg (%0)" : : "b"(m) : "memory" );
+}
+
 u32 getPhysicalAddress(u32 virtualaddr)
 {
     if (((u32)virtualaddr & 0xFFF))
@@ -22,6 +58,7 @@ u32 getPhysicalAddress(u32 virtualaddr)
     if (!directory[pdindex].present) return 0x0;
 
     PageTableEntry *entry = (PageTableEntry *) (directory[pdindex].address << 12);
+    BOCHS_BREAK;
     if (!entry[ptindex].present) return 0x0;
 
     return (u32) (entry[ptindex].address << 12);
@@ -52,7 +89,6 @@ void remap(u32 virtual_old, u32 virtual_new)
 }
 void map(u32 physaddr, u32 virtualaddr)
 {
-   // Make sure that both addresses are page-aligned.
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
         kPanic;
 
@@ -60,9 +96,10 @@ void map(u32 physaddr, u32 virtualaddr)
     u32 ptindex = (u32) virtualaddr >> 12 & 0x03FF;
     
     if (!(directory[pdindex].present))
-        kPanic;
-
+        (directory[pdindex].present) = 1; // TODO temporary
+    
     PageTableEntry *pt = (PageTableEntry *)(directory[pdindex].address << 12);
 
     pt[ptindex].entry = ((u32)physaddr) | 0x01; // Present
+    invlpg((const u32 *)virtualaddr);    
 }

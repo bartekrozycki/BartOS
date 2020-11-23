@@ -29,9 +29,13 @@ typedef struct InterruptSave{
 } __attribute__((packed)) InterruptSave;
 
 typedef void (*IrqCall)(InterruptSave *is); // function pointer to interrupts handler
+typedef void (*IsrCall)(InterruptSave *is); // function pointer to interrupts handler
 
 void isr_handler(InterruptSave is);
 void irq_handler(InterruptSave is);
 
 void irq_new_call(u8 irq_number, IrqCall caller);
 void irq_remove_call(u8 irq_number);
+
+void isr_new_call(u8 isr_number, IsrCall caller);
+void isr_remove_call(u8 isr_number);

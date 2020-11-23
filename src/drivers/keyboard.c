@@ -39,7 +39,7 @@ u8 keymap[128] =
     "\0" // F12
 ;
 
-void keyboard_init(void)
+void init_keyboard(void)
 {
     irq_new_call(KEYBOARD_IRQ_LINE, keyboard_interrupt);
     print(SERIAL, "[Kernel] Keyboard initalized\n");

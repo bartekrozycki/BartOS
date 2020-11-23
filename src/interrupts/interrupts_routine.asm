@@ -31,7 +31,6 @@ global isr%1
 align 4
 isr%1:
     cli ; handling error so turned off interrupts for moment
-
     ; ERROR CODE HAS BEEN PUSHED TO STACK
     push %1 ; push isr id on stack
     jmp __isr__

@@ -1,6 +1,5 @@
 .vscode
 *.o
-*.iso
 *.log
 isodir
 *.txt

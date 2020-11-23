@@ -95,7 +95,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
                 map_at(page_directory, (u32 *)(mmap->baselow + i), (u32 *)(mmap->baselow + i));
     }
 
-    map_at(page_directory, 0xb8000, 0xb8000);
+    map_at(page_directory, 0xb8000 + 1, 0xb8000);
 
     enablePaging(page_directory);
     init_serial();
@@ -126,11 +126,55 @@ void *ke_alloc(u32 *space, u32 size)
 
     return (void *)addr;
 }
+char *stringifikacja (unsigned int value, char * str, int base )
+{
+    const char digits[] = "0123456789ABCDEF";
+    int i, j;
+    unsigned remainder;
+    char c;
 
+    /* Check base is supported. */
+    if ((base < 2) || (base > 16))
+    { 
+        str[0] = '\0';
+        return 0;
+    }  
+
+    /* Convert to string. Digits are in reverse order.  */
+    i = 0;
+    do 
+    {
+        remainder = value % base;
+        str[i++] = digits[remainder];
+        value = value / base;
+    } while (value != 0);  
+    str[i] = '\0'; 
+
+    /* Reverse string.  */
+    for (j = 0, i--; j < i; j++, i--)
+    {
+        c = str[j];
+        str[j] = str[i];
+        str[i] = c; 
+    }       
+
+    return str;
+    
+}
 void map_at(PageDirectory *page_directory, void *physaddr, void *virtualaddr)
 {
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
+    {
+        u16 *term = 0xb8000;
+
+        term += 100;
+        u8 *rip = stringifikacja(physaddr, rip, 16);
+
+        while(*rip != '\0')
+            *term++ = (unsigned char) *rip++ | (0x2 << 8);
+
         kPanic;
+    }
 
     u32 pdindex = (u32)virtualaddr >> 22;
     u32 ptindex = (u32)virtualaddr >> 12 & 0x03FF;

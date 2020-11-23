@@ -165,15 +165,8 @@ void map_at(PageDirectory *page_directory, void *physaddr, void *virtualaddr)
 {
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
     {
-        u16 *term = 0xb8000;
-
-        term += 100;
-        u8 *rip = stringifikacja(physaddr, rip, 16);
-
-        while(*rip != '\0')
-            *term++ = (unsigned char) *rip++ | (0x2 << 8);
-
-        kPanic;
+        physaddr = ((u32)physaddr) & ~(((u32)physaddr) & 0xFFF);
+        virtualaddr = ((u32)virtualaddr) & ~(((u32)virtualaddr) & 0xFFF);
     }
 
     u32 pdindex = (u32)virtualaddr >> 22;

@@ -33,7 +33,7 @@ void init_terminal(void)
 {    
     terminal_pos_row = 0;
     terminal_pos_col = 0;
-    terminal_color   = TERMINAL_COLOR_DOS_DEFAULT;
+    terminal_color   = TERMINAL_COLOR_BLUE_SCREEN_OF_DEATH;
     terminal_mem     = TERMINAL_VIDEO_MEMORY_ADDRESS;
 
     terminal_clear();
@@ -51,10 +51,10 @@ void terminal_clear(void)
 }
 void terminal_scroll(void)
 {
-    for (u32 i = VGA_WIDTH; i < VGA_WIDTH * VGA_HEIGHT; i++)
+    for (u32 i = VGA_WIDTH; i < VGA_WIDTH * VGA_HEIGHT - VGA_WIDTH; i++)
         *(terminal_mem + i) = *(terminal_mem + i + VGA_WIDTH);
 
-    u8 empty = vga_entry(' ', terminal_color);
+    u16 empty = vga_entry(' ', terminal_color);
     for (u32 i = VGA_WIDTH *( VGA_HEIGHT - 1); i < VGA_WIDTH *VGA_HEIGHT; i++)
         *(terminal_mem + i) = empty;
 

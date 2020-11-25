@@ -12,6 +12,8 @@ void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end)
          (u32)mmap < (mbi->mmap_address + mbi->mmap_length);
          mmap = (MultibootMemoryMap *)((u32)mmap + mmap->size + sizeof(mmap->size)))
     {
+        if (mmap->basehigh) continue;
+        
         if (mmap->type == MULTIBOOT_MMAP_FREE_MEMORY)
         {
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)

@@ -33,6 +33,8 @@ _start:
 
 cli
 
+
+
 ; setup stack
 mov esp, kernel_stack
 add esp, INITSTACKSIZE

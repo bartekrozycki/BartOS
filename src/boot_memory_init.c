@@ -42,10 +42,8 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
 
     clearSpace(page_table_space, PAGE_TABLES_SPACE_SIZE);
 
-    // TODO unmap 0x100000 < kernlEnd in high kernel
     for (u32 i = KERNEL_BOOT_VMA; i < kAllocSpace; i += 0x1000)
         map_at(page_directory, (u32 *)i, (u32 *)i);
-    ///////////////////////////////////////////////////////
 
     // k e r n e l   m a p    h i g h
     for (u32 i = kernelStart; i < kernelEnd; i += 0x1000)
@@ -95,7 +93,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
                 map_at(page_directory, (u32 *)(mmap->baselow + i), (u32 *)(mmap->baselow + i));
     }
 
-    map_at(page_directory, 0xb8000 + 1, 0xb8000);
+    map_at(page_directory, 0xb8000, 0xF0000000);
 
     enablePaging(page_directory);
     init_serial();
@@ -126,46 +124,13 @@ void *ke_alloc(u32 *space, u32 size)
 
     return (void *)addr;
 }
-char *stringifikacja (unsigned int value, char * str, int base )
-{
-    const char digits[] = "0123456789ABCDEF";
-    int i, j;
-    unsigned remainder;
-    char c;
 
-    /* Check base is supported. */
-    if ((base < 2) || (base > 16))
-    { 
-        str[0] = '\0';
-        return 0;
-    }  
-
-    /* Convert to string. Digits are in reverse order.  */
-    i = 0;
-    do 
-    {
-        remainder = value % base;
-        str[i++] = digits[remainder];
-        value = value / base;
-    } while (value != 0);  
-    str[i] = '\0'; 
-
-    /* Reverse string.  */
-    for (j = 0, i--; j < i; j++, i--)
-    {
-        c = str[j];
-        str[j] = str[i];
-        str[i] = c; 
-    }       
-
-    return str;
-    
-}
+// can be used only in early stage :)
 void map_at(PageDirectory *page_directory, void *physaddr, void *virtualaddr)
 {
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
     {
-        physaddr = ((u32)physaddr) & ~(((u32)physaddr) & 0xFFF);
+        physaddr = ((u32)physaddr) & ~(((u32)physaddr) & 0xFFF);                // TODO should be ok
         virtualaddr = ((u32)virtualaddr) & ~(((u32)virtualaddr) & 0xFFF);
     }
 

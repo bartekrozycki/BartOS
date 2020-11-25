@@ -9,7 +9,7 @@
 
 #define VGA_WIDTH                               80
 #define VGA_HEIGHT                              25
-#define TERMINAL_VIDEO_MEMORY_ADDRESS           (u16 *) 0xB8000
+#define TERMINAL_VIDEO_MEMORY_ADDRESS           (u16 *) 0xF0000000
 
 #define TERMINAL_COLOR_DOS_DEFAULT              0x07
 #define TERMINAL_COLOR_BLUE_SCREEN_OF_DEATH     0x1F

@@ -34,7 +34,7 @@ static inline u32 get_highest_adrress(MultibootInfo* mbi)
 {
     u32 ret;
     for (MultibootMemoryMap *mmap = (MultibootMemoryMap *) mbi->mmap_address; (u32) mmap < (mbi->mmap_address + mbi->mmap_length); mmap = (MultibootMemoryMap *)((u32)mmap + mmap->size + sizeof(mmap->size)))
-        if (mmap->type == MULTIBOOT_MMAP_FREE_MEMORY)
+        if (!mmap->basehigh && mmap->type == MULTIBOOT_MMAP_FREE_MEMORY)
             ret = mmap->baselow + mmap->lenlow;
     return ret;
 }

@@ -5,6 +5,7 @@
 #include "kalloc.h"
 #include "IRQ_handlers.h"
 #include "print.h"
+#include "lib.h"
 
 PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
@@ -35,9 +36,22 @@ static void pageFault(InterruptSave *is)
 
 void init_paging()
 {
-    u32 pd_index = KERNEL_BOOT_VMA >> 22;
-
     isr_new_call(14, pageFault);
+
+
+    //clear first 4 MiB;
+    PageTableEntry *entry = (PageTableEntry *) (directory[0].address << 12);
+    memset(entry, ' ', 1024 * sizeof(PageTableEntry));
+    directory[0].present = 0;
+
+    // reload PD 
+    u32 reset;
+    __asm__ ("movl %%cr3, %0": "=r"(reset):);
+    __asm__ ("movl %0, %%cr3": : "a"(reset));
+    ///
+
+
+    u32 pd_index = KERNEL_BOOT_VMA >> 22;
 }
 
 

@@ -42,16 +42,15 @@ ${KERNEL}: $(OBJS) $(LINKER)
 	$(info Linking object files)
 	@$(LD) $(LDFLAGS) $(OBJS) -o $@
 
-%.o:%.asm
+%.o: %.asm
 	$(info [Compiling ASM] $^)
 	@$(AS) $(ASFLAGS) $^
-%.o:%.c
+%.o: %.c
 	$(info [Compiling C] $^)
 	@$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
 	$(info Cleaning)
 	rm -f $(OBJS)
-run:
-	@bochs
-	
+run-terminal-bochs:
+	@bochs -q

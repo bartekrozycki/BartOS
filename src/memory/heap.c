@@ -17,6 +17,6 @@ void init_heap()
         temp = kalloc();
         map((u32)temp, HEAP_SPACE + i);
     }
-    heap_address = HEAP_SPACE;
+    heap_address = (u32 *) HEAP_SPACE;
     print(SERIAL, "Heap initialized at %p total size %dMiB\n", HEAP_SPACE, HEAP_SIZE >> 20);
 }

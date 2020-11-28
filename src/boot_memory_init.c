@@ -93,7 +93,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
                 map_at(page_directory, (u32 *)(mmap->baselow + i), (u32 *)(mmap->baselow + i));
     }
 
-    map_at(page_directory, 0xb8000, 0xF0000000);
+    map_at(page_directory, (u32 *) 0xb8000, (u32 *) 0xF0000000);
 
     enablePaging(page_directory);
     init_serial();
@@ -130,17 +130,17 @@ void map_at(PageDirectory *page_directory, void *physaddr, void *virtualaddr)
 {
     if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
     {
-        physaddr = ((u32)physaddr) & ~(((u32)physaddr) & 0xFFF);                // TODO should be ok
-        virtualaddr = ((u32)virtualaddr) & ~(((u32)virtualaddr) & 0xFFF);
+        physaddr = (void *) (((u32) physaddr) & ~(((u32) physaddr) & 0xFFF));
+        virtualaddr = (void *) (((u32) virtualaddr) & ~(((u32) virtualaddr) & 0xFFF));
     }
 
-    u32 pdindex = (u32)virtualaddr >> 22;
-    u32 ptindex = (u32)virtualaddr >> 12 & 0x03FF;
+    u32 pd_index = (u32)virtualaddr >> 22;
+    u32 pt_index = (u32)virtualaddr >> 12 & 0x03FF;
 
-    if (!((PageDirectory *)page_directory)[pdindex].present)
-        ((PageDirectory *)page_directory)[pdindex].present = 1;
+    if (!((PageDirectory *)page_directory)[pd_index].present)
+        ((PageDirectory *)page_directory)[pd_index].present = 1;
 
-    PageTableEntry *PTE = (PageTableEntry *)(((PageDirectory *)page_directory)[pdindex].address << 12);
+    PageTableEntry *PTE = (PageTableEntry *)(((PageDirectory *)page_directory)[pd_index].address << 12);
 
-    PTE[ptindex].entry = ((u32)physaddr) | 0x01; // Present
+    PTE[pt_index].entry = ((u32)physaddr) | 0x01; // Present
 }

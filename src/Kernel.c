@@ -12,14 +12,12 @@ void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low
 {
 	init_gdt();
 	init_idt();
-
 	init_paging();
 	
 	init_heap();
 	init_keyboard();
 
 	init_terminal();
-
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");
 	print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");

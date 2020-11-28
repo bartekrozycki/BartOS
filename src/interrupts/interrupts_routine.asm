@@ -1,5 +1,6 @@
 ;%1 function irq suffix
 ;%2 gate number
+
 %macro IRQ 2
 global irq%1
 irq%1:

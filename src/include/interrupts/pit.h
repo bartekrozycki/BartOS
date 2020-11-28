@@ -1,5 +1,5 @@
 #pragma once
-#include "IRQ_handlers.h"
+#include "interrupts_handlers.h"
 
 #define PROGRAMMABLE_INTERRUPT_TIMER_LINE 0
 

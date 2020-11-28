@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRQ_handlers.h"
+#include "interrupts_handlers.h"
 
 #define KEYBOARD_IRQ_LINE 1
 

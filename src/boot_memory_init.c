@@ -1,11 +1,11 @@
 #include "boot_memory_init.h"
 #include "kernel_panic.h"
-#include "bitmap.h"
+#include "physical_memory_bitmap.h"
 #include "terminal.h"
 #include "print.h"
 #include "serial.h"
-#include "mStack.h"
-#include "kalloc.h"
+#include "physical_memory_stack.h"
+#include "kernel_frame_alloc.h"
 
 extern void Main(MultibootInfo *mboot_info);
 

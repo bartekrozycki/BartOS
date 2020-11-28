@@ -1,6 +1,6 @@
 #include "heap.h"
 #include "mem_map.h"
-#include "kalloc.h"
+#include "kernel_frame_alloc.h"
 #include "print.h"
 #include "kernel_panic.h"
 #include "ints.h"

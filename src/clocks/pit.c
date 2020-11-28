@@ -1,5 +1,5 @@
 #include "pit.h"
-#include "IRQ_handlers.h"
+#include "interrupts_handlers.h"
 #include "print.h"
 #include "terminal.h"
 

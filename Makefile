@@ -27,7 +27,7 @@ endif
 
 LD		  = $(CROSS)/i686-elf-ld
 LINKER    = link.ld
-LDFLAGS   = -T $(LINKER)
+LDFLAGS   = -T $(LINKER) -Map memory.map
 
 ISO       = os.iso
 KERNEL    = kernel.bin

@@ -1,4 +1,4 @@
-#include "IRQ_handlers.h"
+#include "interrupts_handlers.h"
 #include "keyboard.h"
 #include "terminal.h"
 #include "print.h"

@@ -5,7 +5,7 @@
 #include "kernel_panic.h"
 #include "ints.h"
 
-static heap_t *heap;
+static heap_t *heap = NULL;
 
 /**
  * @param kernel_end end of kernel address
@@ -33,31 +33,25 @@ void init_heap() {
             .heap_start = (void *) HEAP_SPACE,
             .head = head,
             .tail = tail,
-            .current_id = HEAP_FIRST_UID,
-            .unused = 0xBEEF
     };
     *head = (block_t) {
-            .prev = NULL,
-            .next = free,
-            .free = 0,
+            .p_prev = NULL,
+            .p_next = free,
+            .free = HEAP_ALLOCATED,
             .size = 0,
-            .id = HEAP_HEAD_UID
     };
     *free = (block_t) {
-            .prev = head,
-            .next = tail,
-            .free = 1,
+            .p_prev = head,
+            .p_next = tail,
+            .free = HEAP_FREE,
             .size = (u8 *) tail - (u8 *) head - sizeof(block_t),
-            .id = HEAP_FIRST_UID
     };
     *tail = (block_t) {
-            .prev = free,
-            .next = NULL,
-            .free = 0,
+            .p_prev = free,
+            .p_next = NULL,
+            .free = HEAP_ALLOCATED,
             .size = 0,
-            .id = HEAP_TAIL_UID
     };
-
 #ifdef DEBUG
     print(SERIAL, "warning Heap Address: %p\n"
                   "warning Heap size total %p\n"
@@ -65,4 +59,10 @@ void init_heap() {
 #endif
 
     print(SERIAL, "info Heap initialized\n\n");
+}
+
+heap_t* getHeap()
+{
+    if (!heap) kPanic;
+    return heap;
 }

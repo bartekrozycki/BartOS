@@ -3,6 +3,10 @@
   <component name="CidrRootsConfiguration">
     <sourceRoots>
       <file path="$PROJECT_DIR$/src" />
+      <file path="$PROJECT_DIR$/src/include/drivers" />
+      <file path="$PROJECT_DIR$/src/include/interrupts" />
+      <file path="$PROJECT_DIR$/src/include/memory" />
+      <file path="$PROJECT_DIR$/src/include/std" />
     </sourceRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/isodir" />
@@ -15,7 +19,7 @@
         <option name="analyzerType" value="OUTPUT_PARSING" />
         <option name="buildOptions" value="" />
         <option name="buildTarget" value="all" />
-        <option name="cleanTarget" value="clean" />
+        <option name="cleanTarget" value="" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>

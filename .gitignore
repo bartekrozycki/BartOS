@@ -3,7 +3,4 @@
 *.log
 isodir
 *.txt
-*.iml
-*.xml
 .gitignore
-.project

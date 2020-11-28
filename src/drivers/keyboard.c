@@ -42,7 +42,7 @@ u8 keymap[128] =
 void init_keyboard(void)
 {
     irq_new_call(KEYBOARD_IRQ_LINE, keyboard_interrupt);
-    print(SERIAL, "(info) Keyboard initalized\n");
+    print(SERIAL, "info Keyboard initalized\n\n");
 }
 
 void keyboard_interrupt(InterruptSave *is)

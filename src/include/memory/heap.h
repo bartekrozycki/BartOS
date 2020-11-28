@@ -2,8 +2,6 @@
 
 #include "paging.h"
 
-#define NULL ((void *) 0)
-
 #define HEAP_HEAD_UID -1
 #define HEAP_TAIL_UID -2
 #define HEAP_FIRST_UID 1

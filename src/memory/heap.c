@@ -3,6 +3,7 @@
 #include "kalloc.h"
 #include "print.h"
 #include "kernel_panic.h"
+#include "ints.h"
 
 static heap_t *heap;
 
@@ -57,5 +58,11 @@ void init_heap() {
             .id = HEAP_TAIL_UID
     };
 
-    print(SERIAL, "(info) Heap initialized at %p total SPACE %dMiB\n", HEAP_SPACE, free->size >> 20);
+#ifdef DEBUG
+    print(SERIAL, "warning Heap Address: %p\n"
+                  "warning Heap size total %p\n"
+                  "warning Heap size available %p\n\n", heap->heap_start, HEAP_SIZE, free->size);
+#endif
+
+    print(SERIAL, "info Heap initialized\n\n");
 }

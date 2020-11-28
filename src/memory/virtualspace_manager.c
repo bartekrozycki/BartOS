@@ -8,32 +8,36 @@
 PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
 const char *page_fault_messages[8] = {
-    "Supervisory process tried to read a non-present page entry",
-    "Supervisory process tried to read a page and caused a protection fault",
-    "Supervisory process tried to write to a non-present page entry",
-    "Supervisory process tried to write a page and caused a protection fault",
-    "User process tried to read a non-present page entry",
-    "User process tried to read a page and caused a protection fault",
-    "User process tried to write to a non-present page entry",
-    "User process tried to write a page and caused a protection fault"
+        "Supervisory process tried to read a non-present page entry",
+        "Supervisory process tried to read a page and caused a protection fault",
+        "Supervisory process tried to write to a non-present page entry",
+        "Supervisory process tried to write a page and caused a protection fault",
+        "User process tried to read a non-present page entry",
+        "User process tried to read a page and caused a protection fault",
+        "User process tried to write to a non-present page entry",
+        "User process tried to write a page and caused a protection fault"
 };
 
-static void pageFault(InterruptSave *is)
-{
+static void pageFault(InterruptSave *is) {
     u32 *cr2_value = (u32 *) 0xDEADBEEF;
     __asm__ ("movl %%cr2, %0": "=r"(cr2_value) : );
 
     print(SERIAL, "\n---====[ Detected page fault.\n");
-    print(SERIAL, "Error code: %b\nError Message: %s\nInfo CR2: %p\n", is->err, page_fault_messages[is->err], cr2_value);
-    print(SERIAL, "Info EAX %p\nInfo EBX %p\nInfo ECX %p\nInfo EDX %p\nInfo ESP %p\nInfo EBP %p\nInfo ESI %p\nInfo EDI %p\n", 
-                    is->eax, is->ebx, is->ecx, is->edx, is->esp, is->ebp, is->esi, is->edi);
-    print(SERIAL, "Info EIP %p\nInfo CS %p\nInfo EFLAGS %p\nInfo USER_ESP %p\nInfo SS %p\n", 
-                    is->eip, is->cs, is->eflags, is->useresp, is->ss);
+    print(SERIAL, "Error code: %b\nError Message: %s\nInfo CR2: %p\n", is->err, page_fault_messages[is->err],
+          cr2_value);
+    print(SERIAL,
+          "Info EAX %p\nInfo EBX %p\nInfo ECX %p\nInfo EDX %p\nInfo ESP %p\nInfo EBP %p\nInfo ESI %p\nInfo EDI %p\n",
+          is->eax, is->ebx, is->ecx, is->edx, is->esp, is->ebp, is->esi, is->edi);
+    print(SERIAL, "Info EIP %p\nInfo CS %p\nInfo EFLAGS %p\nInfo USER_ESP %p\nInfo SS %p\n",
+          is->eip, is->cs, is->eflags, is->useresp, is->ss);
     print(SERIAL, "]====---\n");
+
+#ifdef DEBUG
+    BOCHS_BREAK;
+#endif
 }
 
-void init_paging()
-{
+void init_paging() {
     isr_new_call(14, pageFault);
 
 
@@ -51,16 +55,13 @@ void init_paging()
 
 }
 
-
 // Source: https://wiki.osdev.org/Inline_Assembly/Examples
-static inline void invlpg(const void* m)
-{
+static inline void invlpg(const void *m) {
     __asm__( "invlpg (%0)" : : "b"(m) : "memory" );
 }
 
-u32 getPhysicalAddress(u32 virtual_address)
-{
-    if (((u32)virtual_address & 0xFFF))
+u32 getPhysicalAddress(u32 virtual_address) {
+    if (((u32) virtual_address & 0xFFF))
         kPanic;
 
     u32 pd_index = (u32) virtual_address >> 22;
@@ -74,9 +75,9 @@ u32 getPhysicalAddress(u32 virtual_address)
 
     return (u32) (entry[pt_index].address << 12);
 }
-void remap(u32 virtual_old, u32 virtual_new)
-{
-    if (((u32)virtual_old & 0xFFF) || ((u32)virtual_new & 0xFFF))
+
+void remap(u32 virtual_old, u32 virtual_new) {
+    if (((u32) virtual_old & 0xFFF) || ((u32) virtual_new & 0xFFF))
         kPanic;
 
     u32 old_pd = (u32) virtual_old >> 22;
@@ -96,21 +97,21 @@ void remap(u32 virtual_old, u32 virtual_new)
     PageTableEntry *new_entry = (PageTableEntry *) (directory[new_pd].address << 12);
 
     new_entry[new_pt].entry = entry | 0x1;
-    invlpg((const u32 *)virtual_new);    
+    invlpg((const u32 *) virtual_new);
 }
-void map(u32 physaddr, u32 virtualaddr)
-{
-    if (((u32)physaddr & 0xFFF) || ((u32)virtualaddr & 0xFFF))
+
+void map(u32 physical_address, u32 virtual_address) {
+    if (((u32) physical_address & 0xFFF) || ((u32) virtual_address & 0xFFF))
         kPanic;
 
-    u32 pd_index = (u32) virtualaddr >> 22;
-    u32 pt_index = (u32) virtualaddr >> 12 & 0x03FF;
-    
+    u32 pd_index = (u32) virtual_address >> 22;
+    u32 pt_index = (u32) virtual_address >> 12 & 0x03FF;
+
     if (!(directory[pd_index].present))
         (directory[pd_index].present) = 1;
-    
-    PageTableEntry *pt = (PageTableEntry *)(directory[pd_index].address << 12);
 
-    pt[pt_index].entry = ((u32)physaddr) | 0x01; // Present
-    invlpg((const u32 *)virtualaddr);    
+    PageTableEntry *pt = (PageTableEntry *) (directory[pd_index].address << 12);
+
+    pt[pt_index].entry = ((u32) physical_address) | 0x01; // Present
+    invlpg((const u32 *) virtual_address);
 }

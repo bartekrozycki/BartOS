@@ -1,16 +1,13 @@
 #pragma once
 
 #include "terminal.h"
+#include "ints.h"
 
 #define ASSERT(str, size) \
 if (sizeof(str) != size) {\
    terminal_writestring("(Assert failed) " #str " =/= " #size "."); \
    while(1);\
 }
-
-// stddef.h
-#define NULL ((void*) 0)
-typedef unsigned int size_t;
 
 // stdbool.h
 #define true  1

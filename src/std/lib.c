@@ -2,7 +2,6 @@
 #include "terminal.h"
 #include "ints.h"
 
-
 int memcmp(const void* p1, const void* p2, size_t n)
 {
     register const unsigned char *ptr1 = (const unsigned char *) p1, *ptr2 = (const unsigned char *) p2;

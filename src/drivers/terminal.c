@@ -33,14 +33,14 @@ void init_terminal(void)
 {    
     terminal_pos_row = 0;
     terminal_pos_col = 0;
-    terminal_color   = TERMINAL_COLOR_BLUE_SCREEN_OF_DEATH;
+    terminal_color   = TERMINAL_COLOR_DOS_DEFAULT;
     terminal_mem     = TERMINAL_VIDEO_MEMORY_ADDRESS;
 
     terminal_clear();
     
     terminal_cursor_enable(13, 15);
 
-    print(SERIAL, "(info) Terminal initialized.\n");
+    print(SERIAL, "info Terminal initialized.\n\n");
 
 }
 void terminal_clear(void)

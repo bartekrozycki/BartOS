@@ -98,17 +98,20 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
     enablePaging(page_directory);
     init_serial();
 
-    print(SERIAL, "(info) Page Directory: %p\n", page_directory);
-    print(SERIAL, "(info) PTE[1024]: %p\n", page_table_space);
 
     setBitmapAddress((u32 *)mem_bitmap_ptr);
-    print(SERIAL, "(info) BITMAP: %p size %d\n", mem_bitmap_ptr, ALIGN_TO(mem_bitmap_bytes, 0x1000));
     
     setMStackAdress((u32 *)mem_stack_ptr);
-    print(SERIAL, "(info) Stack %p size %d\n", mem_stack_ptr, ALIGN_TO(mem_stack_bytes, 0x1000));
 
     init_kalloc(mbi, (u32)KERNEL_BOOT_VMA, kAllocSpace);
-    print(SERIAL, "(info) Kernel space from %p to %p\n", KERNEL_BOOT_VMA, kAllocSpace);
+
+#ifdef DEBUG
+    print(SERIAL, "warning Kernel space from %p to %p\n", KERNEL_BOOT_VMA, kAllocSpace);
+    print(SERIAL, "warning Page Directory: %p\n", page_directory);
+    print(SERIAL, "warning Page Table Entrys: %p\n", page_table_space);
+    print(SERIAL, "warning Memory Bitmap: %p size %p\n", mem_bitmap_ptr, ALIGN_TO(mem_bitmap_bytes, 0x1000));
+    print(SERIAL, "warning Memory Stack %p size %p\n\n", mem_stack_ptr, ALIGN_TO(mem_stack_bytes, 0x1000));
+#endif
 
     Main(mbi);
 

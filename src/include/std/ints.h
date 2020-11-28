@@ -4,6 +4,10 @@ typedef signed char		    int8_t;
 typedef signed short int	int16_t;
 typedef signed int		    int32_t;
 
+// stddef.h
+#define NULL ((void*) 0)
+typedef unsigned int size_t;
+
 #if __WORDSIZE == 64
 typedef long int		int64_t;
 #else

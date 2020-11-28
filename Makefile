@@ -12,6 +12,19 @@ CFLAGS	+= -Isrc/include/drivers
 CFLAGS	+= -Isrc/include/memory
 CFLAGS	+= -Isrc/include/interrupts
 
+
+ifeq ($(debug), 1)
+$(warning -=  =- -=  =- -=  =-)
+$(warning Debug mode)
+$(warning -=  =- -=  =- -=  =-)
+CFLAGS 	+= -DDEBUG=1
+else
+$(warning -=  =- -=  =- -=  =-)
+$(warning Compile mode)
+$(warning -=  =- -=  =- -=  =-)
+endif
+
+
 LD		  = $(CROSS)/i686-elf-ld
 LINKER    = link.ld
 LDFLAGS   = -T $(LINKER)
@@ -51,6 +64,7 @@ ${KERNEL}: $(OBJS) $(LINKER)
 
 clean:
 	$(info Cleaning)
-	rm -f $(OBJS)
+	@rm -f $(OBJS)
 run-terminal-bochs:
 	@bochs -q
+

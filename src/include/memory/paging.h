@@ -47,5 +47,5 @@ typedef union PageTableEntry {
 void init_paging();
 
 u32 getPhysicalAddress(u32 virtual_address);
-void map(u32 physaddr, u32 virtualaddr);
+void map(u32 physical_address, u32 virtual_address);
 void remap(u32 virtual_old, u32 virtual_new);

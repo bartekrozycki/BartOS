@@ -15,7 +15,7 @@ void init_serial() {
     out(PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
 
     serial_initalized = 1;
-    serial_writestring("[COM 1] Serial initalized\n");
+    serial_writestring("(info) Serial initalized\n");
 }
 
 int serial_received() {

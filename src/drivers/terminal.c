@@ -40,7 +40,7 @@ void init_terminal(void)
     
     terminal_cursor_enable(13, 15);
 
-    print(SERIAL, "[Kernel] Terminal initialized.\n");
+    print(SERIAL, "(info) Terminal initialized.\n");
 
 }
 void terminal_clear(void)

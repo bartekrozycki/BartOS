@@ -1,5 +1,5 @@
 #include "ints.h"
-#include "system.h"
+#include "io_bus.h"
 #include "terminal.h"
 #include "idt.h"
 #include "lib.h"

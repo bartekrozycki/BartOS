@@ -1,6 +1,6 @@
 #include "serial.h"
 #include "lib.h"
-#include "system.h"
+#include "io_bus.h"
 #include "ints.h"
 
 u8 serial_initalized = 0;

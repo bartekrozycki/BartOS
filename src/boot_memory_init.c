@@ -2,12 +2,14 @@
 #include "kernel_panic.h"
 #include "physical_memory_bitmap.h"
 #include "terminal.h"
-#include "print.h"
 #include "serial.h"
 #include "physical_memory_stack.h"
-#include "kernel_frame_alloc.h"
+#include "kernel_kalloc.h"
+#ifdef DEBUG
+#include "print.h"
+#endif
 
-extern void Main(MultibootInfo *mboot_info);
+_Noreturn extern void Main(MultibootInfo *mboot_info);
 
 void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *kernel_end) {
     if (mboot_magic != MULTIBOOT_EAX_MAGIC)

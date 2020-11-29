@@ -1,10 +1,3 @@
-global int_wait_forever
-int_wait_forever:
-    sti
-.loop:
-    hlt
-jmp	.loop
-
 global out
 out:
     mov	dx, [esp + 4]

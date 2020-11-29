@@ -1,7 +1,7 @@
 global _start:function (_start.end - _start)
 global gdt_load
 global load_idt
-global permahalt
+global perm_halt
 
 extern KERNEL_BOOT_VMA
 extern KERNEL_HIGH_VMA
@@ -52,11 +52,11 @@ push eax ; magic
 
 call boot_init_mem
 
-jmp permahalt
+jmp perm_halt
 
 .end:
 
-permahalt:
+perm_halt:
     cli
     hlt
     

@@ -9,7 +9,7 @@
 #define FILE_LINE __FILE__ ":" STRINGIFY(__LINE__)
 #define kPanic k_panic(FILE_LINE)
 
-extern void permahalt(void); // TODO make it in high kernel beacuse now system gonna crasshhhh
+extern void perm_halt(void); // TODO make it in high kernel beacuse now system gonna crasshhhh
 static inline void k_panic(char *str)
 {
     unsigned short *video = (unsigned short*) 0xb8000; // TODO works... but when remove map from low memory system going to crash
@@ -21,5 +21,5 @@ static inline void k_panic(char *str)
     while(*str != '\0')
         *video++ = (unsigned char) *str++ | (0x2 << 8);
 
-    permahalt();
+    perm_halt();
 }

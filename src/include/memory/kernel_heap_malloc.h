@@ -8,3 +8,6 @@
 
 void *malloc(size_t size);
 void free(void *ptr);
+#ifdef DEBUG
+void heap_debug();
+#endif

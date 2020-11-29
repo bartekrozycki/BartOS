@@ -5,6 +5,7 @@
 #include "print.h"
 #include "lib.h"
 
+
 PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
 const char *page_fault_messages[8] = {
@@ -85,9 +86,9 @@ void remap(u32 virtual_old, u32 virtual_new) {
     u32 new_pd = (u32) virtual_new >> 22;
     u32 new_pt = (u32) virtual_new >> 12 & 0x03FF;
 
-    if (!directory[old_pd].present) permahalt();
+    if (!directory[old_pd].present) kPanic;
     PageTableEntry *old_entry = (PageTableEntry *) (directory[old_pd].address << 12);
-    if (!old_entry[old_pt].present) permahalt();
+    if (!old_entry[old_pt].present) kPanic;
 
     u32 entry = old_entry[old_pt].address << 12;
 

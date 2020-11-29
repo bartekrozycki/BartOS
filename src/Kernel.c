@@ -1,15 +1,13 @@
 #include "multiboot.h"
 #include "gdt.h"
 #include "idt.h"
-#include "system.h"
 #include "print.h"
 #include "kernel_heap.h"
 #include "kernel_panic.h"
 #include "terminal.h"
 #include "keyboard.h"
-#include "kernel_heap_malloc.h"
 
-void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low physical memory
+_Noreturn void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low physical memory
 {
 	init_gdt();
 	init_idt();
@@ -28,29 +26,9 @@ void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low
 	print(TERMINAL, " |____/ \\__,_|_|   \\__|\\____/|_____/ \n\n");\
 	print(TERMINAL, "\n > ");
 
-    u32* ptr = malloc(1);
-    u32* ptr1 = malloc(1);
-    u32* ptr2 = malloc(1);
-    u32* ptr3 = malloc(1);
+	kPanic;
 
-    print(SERIAL, "%p\n%p\n%p\n%p\n", ptr, ptr1, ptr2, ptr3);
-
-    free(ptr);
-    free(ptr1);
-    free(ptr2);
-    free(ptr3);
-
-    ptr = malloc(1);
-    ptr1 = malloc(1);
-    ptr2 = malloc(1);
-    ptr3 = malloc(1);
-
-    print(SERIAL, "%p\n%p\n%p\n%p\n", ptr, ptr1, ptr2, ptr3);
-
-    free(ptr);
-    free(ptr1);
-    free(ptr2);
-    free(ptr3);
-
-	int_wait_forever();
+    __asm__("sti");
+    while (1)
+        __asm__("hlt");
 }

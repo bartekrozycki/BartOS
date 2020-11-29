@@ -1,5 +1,5 @@
 #include "interrupts_handlers.h"
-#include "system.h"
+#include "io_bus.h"
 #include "print.h"
 #include "kernel_panic.h"
 

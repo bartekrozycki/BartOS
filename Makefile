@@ -66,5 +66,5 @@ clean:
 	$(info Cleaning)
 	@rm -f $(OBJS)
 run-terminal-bochs:
-	@bochs -q
+	@gnome-terminal -- bochs
 

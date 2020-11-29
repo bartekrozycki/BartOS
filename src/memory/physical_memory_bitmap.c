@@ -20,18 +20,19 @@ PageStatus bitmap_get(u32 n)
 }
 
 /**
- * @param n page number
- * @param status ennumerable page status
+ * @param page_number
+ * @param page_status
+ * \page_status FREE / ALLOCATED / SYSTEM / HOLE
  */
-void bitmap_set(u32 n, PageStatus status)
+void bitmap_set(u32 page_number, PageStatus page_status)
 {
     if (!bitmap_address) kPanic;
     
     u32 *ptr = (u32 *)bitmap_address;
-    ptr += (n / 16);
+    ptr += (page_number / 16);
 
-    u32 newval = ((u32)status) << (30 - ((n % 16) * 2));
-    u32 mask = ((u32)0b11) << (30 - ((n % 16) * 2));
+    u32 new_val = ((u32)page_status) << (30 - ((page_number % 16) * 2));
+    u32 mask = ((u32)0b11) << (30 - ((page_number % 16) * 2));
 
-    *ptr = ((*ptr & ~mask) | newval);
+    *ptr = ((*ptr & ~mask) | new_val);
 }

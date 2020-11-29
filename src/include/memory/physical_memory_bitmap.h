@@ -17,5 +17,5 @@ typedef enum PageStatus {
 
 void init_bitmap(u32* address);
 
-void bitmap_set(u32 n, PageStatus status);
+void bitmap_set(u32 page_number, PageStatus page_status);
 PageStatus bitmap_get(u32 n);

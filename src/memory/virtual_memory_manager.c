@@ -109,6 +109,7 @@ void map(u32 physical_address, u32 virtual_address) {
 
     if (!(directory[pd_index].present))
         (directory[pd_index].present) = 1;
+    invlpg((const u32 *) &directory[pd_index]);
 
     PageTableEntry *pt = (PageTableEntry *) (directory[pd_index].address << 12);
 

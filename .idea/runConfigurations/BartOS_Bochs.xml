@@ -3,6 +3,8 @@
     <makefile filename="$PROJECT_DIR$/Makefile" target="" workingDirectory="" arguments="run-terminal-bochs">
       <envs />
     </makefile>
-    <method v="2" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="BartOS Debug" run_configuration_type="MAKEFILE_TARGET_RUN_CONFIGURATION" />
+    </method>
   </configuration>
 </component>

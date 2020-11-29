@@ -1,7 +1,7 @@
 #pragma once
 
-#include "heap.h"
-#include "../std/ints.h"
+#include "kernel_heap.h"
+#include "ints.h"
 
 #define ALIGNED 8
 #define ALIGN_SIZE(size) ((size + ALIGNED - 1) & ~(ALIGNED - 1))

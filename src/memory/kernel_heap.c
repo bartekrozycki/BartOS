@@ -1,4 +1,4 @@
-#include "heap.h"
+#include "kernel_heap.h"
 #include "mem_map.h"
 #include "kernel_frame_alloc.h"
 #include "print.h"
@@ -15,7 +15,7 @@ void init_heap() {
     u32 *temp;
 
     for (u32 i = 0; i < HEAP_SIZE; i += 0x1000) {
-        temp = kalloc();
+        temp = k_alloc(SYSTEM);
         map((u32) temp, HEAP_SPACE + i);
     }
 
@@ -37,19 +37,19 @@ void init_heap() {
     *head = (block_t) {
             .p_prev = NULL,
             .p_next = free,
-            .free = HEAP_ALLOCATED,
+            .free = BLOCK_ALLOCATED,
             .size = 0,
     };
     *free = (block_t) {
             .p_prev = head,
             .p_next = tail,
-            .free = HEAP_FREE,
+            .free = BLOCK_FREE,
             .size = (u8 *) tail - (u8 *) head - sizeof(block_t),
     };
     *tail = (block_t) {
             .p_prev = free,
             .p_next = NULL,
-            .free = HEAP_ALLOCATED,
+            .free = BLOCK_ALLOCATED,
             .size = 0,
     };
 #ifdef DEBUG

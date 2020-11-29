@@ -3,10 +3,11 @@
 #include "idt.h"
 #include "system.h"
 #include "print.h"
-#include "heap.h"
+#include "kernel_heap.h"
 #include "kernel_panic.h"
 #include "terminal.h"
 #include "keyboard.h"
+#include "kernel_heap_malloc.h"
 
 void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low physical memory
 {
@@ -25,11 +26,31 @@ void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low
 	print(TERMINAL, " |  _ < / _` | '__| __| |  | |\\___ \\ \n");
 	print(TERMINAL, " | |_) | (_| | |  | |_| |__| |____) |\n");
 	print(TERMINAL, " |____/ \\__,_|_|   \\__|\\____/|_____/ \n\n");\
-	print(TERMINAL, " Zalety: \n");
-	print(TERMINAL, " - system jest bardzo szybki\n\n");
-	print(TERMINAL, " Funkcjonalnosci: \n");
-	print(TERMINAL, " - mozna pisac\n");
-	print(TERMINAL, " - koniec xD\n\n > ");
+	print(TERMINAL, "\n > ");
+
+    u32* ptr = malloc(1);
+    u32* ptr1 = malloc(1);
+    u32* ptr2 = malloc(1);
+    u32* ptr3 = malloc(1);
+
+    print(SERIAL, "%p\n%p\n%p\n%p\n", ptr, ptr1, ptr2, ptr3);
+
+    free(ptr);
+    free(ptr1);
+    free(ptr2);
+    free(ptr3);
+
+    ptr = malloc(1);
+    ptr1 = malloc(1);
+    ptr2 = malloc(1);
+    ptr3 = malloc(1);
+
+    print(SERIAL, "%p\n%p\n%p\n%p\n", ptr, ptr1, ptr2, ptr3);
+
+    free(ptr);
+    free(ptr1);
+    free(ptr2);
+    free(ptr3);
 
 	int_wait_forever();
 }

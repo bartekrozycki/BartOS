@@ -12,7 +12,7 @@
 extern void permahalt(void); // TODO make it in high kernel beacuse now system gonna crasshhhh
 static inline void k_panic(char *str)
 {
-    unsigned short *video = (unsigned short*) 0xb8000;
+    unsigned short *video = (unsigned short*) 0xb8000; // TODO works... but when remove map from low memory system going to crash
     char *rip =  "R I P    K E R N E L   i n   ";
 
     while(*rip != '\0')

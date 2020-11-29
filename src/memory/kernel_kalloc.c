@@ -2,7 +2,6 @@
 #include "physical_memory_stack.h"
 #include "physical_memory_bitmap.h"
 #include "kernel_panic.h"
-#include "print.h"
 #include "multiboot.h"
 
 void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end) {

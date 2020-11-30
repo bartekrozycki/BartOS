@@ -6,17 +6,19 @@
 #include "kernel_panic.h"
 #include "terminal.h"
 #include "keyboard.h"
+#include "pit.h"
 
 _Noreturn void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low physical memory
 {
 	init_gdt();
 	init_idt();
 	init_paging();
-	
 	init_heap();
-	init_keyboard();
 
+	init_keyboard();
 	init_terminal();
+
+    init_pit(1000);
 
 	print(TERMINAL, "\n  ____             _    ____   _____ \n");
 	print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");
@@ -25,8 +27,6 @@ _Noreturn void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> po
 	print(TERMINAL, " | |_) | (_| | |  | |_| |__| |____) |\n");
 	print(TERMINAL, " |____/ \\__,_|_|   \\__|\\____/|_____/ \n\n");\
 	print(TERMINAL, "\n > ");
-
-	kPanic;
 
     __asm__("sti");
     while (1)

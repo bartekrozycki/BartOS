@@ -25,13 +25,21 @@
  *      0x03F8-0x03FF	    First serial port
  *
  */
+
+/// Programmable Interval Timer
+#define PIT_CHANNEL_0 0x40
+#define PIT_CHANNEL_1 0x41
+#define PIT_CHANNEL_2 0x42
+
+#define PIT_COMMAND 0x043
+
+/// Programmable Interrupt Controller
 #define PIC1		    0x20		/* IO base address for master PIC */
 #define PIC2		    0xA0		/* IO base address for slave PIC */
 #define PIC1_COMMAND	PIC1
 #define PIC1_DATA	    (PIC1+1)
 #define PIC2_COMMAND	PIC2
 #define PIC2_DATA	    (PIC2+1)
-
 #define PIC_EOI		0x20
 
 void out(u16 port, u8 data);

@@ -10,9 +10,9 @@ typedef union PageDirectory {
     struct {
         u8 present:1; //1 bit 'obecności'
         u8 rw:1; // Read/Write
-        u8 us:1; // User/Supervisor
+        u8 us:1; // 0 - supervisor only
         u8 pwt:1; //0 Page-level write-through
-        u8 pcd:1; //0 Page-level cache disable
+        u8 pcd:1; // 1 - cache disabled
         u8 acc:1; // Accessed 
         u8 _ignored:1;
         u8 ps:1; // If CR4.PSE = 1, must be 0; otherwise, ignored
@@ -26,9 +26,9 @@ typedef union PageTableEntry {
     struct {
         u8 present:1; //1 bit 'obecności'
         u8 rw:1; // Read/Write
-        u8 us:1; // User/Supervisor
+        u8 us:1; // 0 - supervisor only
         u8 pwt:1; //0 Page-level write-through
-        u8 pcd:1; //0 Page-level cache disable
+        u8 pcd:1; // 1 - cache disabled
         u8 acc:1; // Accessed 
         u8 dirt:1;
         u8 pat:1; // If the PAT is supported,

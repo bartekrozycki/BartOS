@@ -5,6 +5,7 @@
 #include "serial.h"
 #include "physical_memory_stack.h"
 #include "kernel_kalloc.h"
+
 #ifdef DEBUG
 #include "print.h"
 #endif
@@ -33,6 +34,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
     u32 mem_stack_bytes = FRAMES_COUNT(highest_address) * 4 + 4;
     u32 mem_bitmap_bytes = FRAMES_COUNT(highest_address) / 4;
 
+
     //  p a g i n g    s t r u c t s
 
     page_directory = (PageDirectory *) ke_alloc(&kAllocSpace, PAGE_DIRECTORY_SIZE);
@@ -43,23 +45,26 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
 
     clearSpace(page_table_space, PAGE_TABLES_SPACE_SIZE);
 
-    for (u32 i = KERNEL_BOOT_VMA; i < kAllocSpace; i += 0x1000)
-        map_at(page_directory, (u32 *) i, (u32 *) i);
+    for (u32 i = KERNEL_BOOT_VMA; i < kernelEnd; i += 0x1000)
+        map_at(page_directory, (u32 *) i, (u32 *) i, 0x0, 0x0);
+
 
     // k e r n e l   m a p    h i g h
+
     for (u32 i = kernelStart; i < kernelEnd; i += 0x1000)
-        map_at(page_directory, (u32 *) i, (u32 *) (i + KERNEL_HIGH_VMA));
+        map_at(page_directory, (u32 *) i, (u32 *) (i + KERNEL_HIGH_VMA), 0x0, 0x0);
+
 
     // p a g i n g    s t r u c t s    m a p
-    map_at(page_directory, (u32 *) page_directory, (u32 *) k_struct_space);
+
+    map_at(page_directory, (u32 *) page_directory, (u32 *) k_struct_space, 0x0, 0x0); // 0x10 cache disabled
     k_struct_space += PAGE_DIRECTORY_SIZE;
 
     for (u32 i = 0; i < 1024; ++i)
         map_at(page_directory, ((u8 *) page_table_space) + (0x1000 * i),
-               ((u8 *) k_struct_space) + (0x1000 * i));
+               ((u8 *) k_struct_space) + (0x1000 * i), 0x0, 0x0); // 0x10 cache disabled
 
     k_struct_space += PAGE_TABLES_SPACE_SIZE;
-
 
 
     //  m e m o r y    b i t m a p    s p a c e
@@ -68,41 +73,41 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
     clearSpace(mem_bitmap_ptr, ALIGN_TO(mem_bitmap_bytes, 0x1000));
 
     for (u32 i = 0, j = ALIGN_TO(mem_bitmap_bytes, 0x1000) >> 12; i < j; i++)
-        map_at(page_directory, mem_bitmap_ptr + (0x1000 * i), ((u8 *) k_struct_space) + (0x1000 * i));
+        map_at(page_directory, mem_bitmap_ptr + (0x1000 * i), ((u8 *) k_struct_space) + (0x1000 * i), 0x0, 0x0);
 
     mem_bitmap_ptr = (u8 *) k_struct_space;
     k_struct_space += ALIGN_TO(mem_bitmap_bytes, 0x1000);
+
 
     // m e m o r y    s t a c k     s p a c e
 
     mem_stack_ptr = (u8 *) ke_alloc(&kAllocSpace, mem_stack_bytes);
 
     for (u32 i = 0, j = mem_stack_bytes >> 12; i < j; i++)
-        map_at(page_directory, mem_stack_ptr + (0x1000 * i), ((u8 *) k_struct_space) + (0x1000 * i));
+        map_at(page_directory, mem_stack_ptr + (0x1000 * i), ((u8 *) k_struct_space) + (0x1000 * i), 0x0, 0x0);
 
     mem_stack_ptr = (u8 *) k_struct_space;
     k_struct_space += ALIGN_TO(mem_stack_bytes, 0x1000); //// <---------------- kernel allocated memory end
 
+
     // M u l t i    b o o t    i n f o r m a t i o n
-    map_at(page_directory, mbi, mbi);
+
+    map_at(page_directory, mbi, mbi, 0x0, 0x0);
     for (MultibootMemoryMap *mmap = (MultibootMemoryMap *) mbi->mmap_address;
          (u32) mmap < (mbi->mmap_address + mbi->mmap_length);
          mmap = (MultibootMemoryMap *) ((u32) mmap + mmap->size + sizeof(mmap->size))) {
         if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
-                map_at(page_directory, (u32 *) (mmap->baselow + i), (u32 *) (mmap->baselow + i));
+                map_at(page_directory, (u32 *) (mmap->baselow + i), (u32 *) (mmap->baselow + i), 0x0, 0x0);
     }
 
-    map_at(page_directory, (u32 *) 0xb8000, (u32 *) 0xF0000000);
+    map_at(page_directory, (u32 *) 0xb8000, (u32 *) 0xF0000000, 0x0, 0x0);
 
     enablePaging(page_directory);
     init_serial();
 
-
     setBitmapAddress((u32 *) mem_bitmap_ptr);
-
     setMStackAdress((u32 *) mem_stack_ptr);
-
     init_kalloc(mbi, (u32) KERNEL_BOOT_VMA, kAllocSpace);
 
 #ifdef DEBUG
@@ -128,19 +133,22 @@ void *ke_alloc(u32 *space, u32 size) {
 }
 
 // can be used only in early stage :)
-void map_at(PageDirectory *page_directory, void *physaddr, void *virtualaddr) {
-    if (((u32) physaddr & 0xFFF) || ((u32) virtualaddr & 0xFFF)) {
-        physaddr = (void *) (((u32) physaddr) & ~(((u32) physaddr) & 0xFFF));
-        virtualaddr = (void *) (((u32) virtualaddr) & ~(((u32) virtualaddr) & 0xFFF));
+void map_at(PageDirectory *page_directory,
+            void *physical_adress, void *virtual_address,
+            u16 directory_flags, u16 table_flags) {
+
+    if (((u32) physical_adress & 0xFFF) || ((u32) virtual_address & 0xFFF)) {
+        physical_adress = (void *) (((u32) physical_adress) & ~(((u32) physical_adress) & 0xFFF));
+        virtual_address = (void *) (((u32) virtual_address) & ~(((u32) virtual_address) & 0xFFF));
     }
 
-    u32 pd_index = (u32) virtualaddr >> 22;
-    u32 pt_index = (u32) virtualaddr >> 12 & 0x03FF;
+    u32 pd_index = (u32) virtual_address >> 22;
+    u32 pt_index = (u32) virtual_address >> 12 & 0x03FF;
 
     if (!((PageDirectory *) page_directory)[pd_index].present)
-        ((PageDirectory *) page_directory)[pd_index].present = 1;
+        ((PageDirectory *) page_directory)[pd_index].entry |= (directory_flags & 0xFFF) | 0x1;
 
     PageTableEntry *PTE = (PageTableEntry *) (((PageDirectory *) page_directory)[pd_index].address << 12);
 
-    PTE[pt_index].entry = ((u32) physaddr) | 0x01; // Present
+    PTE[pt_index].entry = ((u32) physical_adress) | (table_flags & 0xFFF) | 0x01; // Present
 }

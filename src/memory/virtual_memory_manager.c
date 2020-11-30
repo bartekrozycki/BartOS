@@ -8,6 +8,11 @@
 
 PageDirectory *directory = (PageDirectory *) KERNEL_STRUCTURES_SPACE;
 
+static inline PageTableEntry* getTableEntry(u32 table_entry_index)
+{
+    return (PageTableEntry *) (((u8 *) directory + PAGE_DIRECTORY_SIZE) + (table_entry_index * 0x1000));
+}
+
 const char *page_fault_messages[8] = {
         "Supervisory process tried to read a non-present page entry",
         "Supervisory process tried to read a page and caused a protection fault",
@@ -42,12 +47,13 @@ void init_paging() {
     isr_new_call(14, pageFault);
 
 
-    //clear first 4 MiB;
-    PageTableEntry *entry = (PageTableEntry *) (directory[0].address << 12);
+    //clear first 8 MiB; // TODO make it better :D
+    PageTableEntry *entry = (PageTableEntry *) (((u8*)directory + 0x1000));
     memset(entry, ' ', 1024 * sizeof(PageTableEntry));
     directory[0].present = 0;
+    directory[0].acc = 0;
 
-    // reload PD 
+    // reload PD
     u32 reset;
     __asm__ ("movl %%cr3, %0": "=r"(reset):);
     __asm__ ("movl %0, %%cr3": : "a"(reset));
@@ -70,8 +76,8 @@ u32 getPhysicalAddress(u32 virtual_address) {
 
     if (!directory[pd_index].present) return 0x0;
 
-    PageTableEntry *entry = (PageTableEntry *) (directory[pd_index].address << 12);
-    BOCHS_BREAK;
+    PageTableEntry *entry = getTableEntry(pd_index);
+
     if (!entry[pt_index].present) return 0x0;
 
     return (u32) (entry[pt_index].address << 12);
@@ -87,7 +93,7 @@ void remap(u32 virtual_old, u32 virtual_new) {
     u32 new_pt = (u32) virtual_new >> 12 & 0x03FF;
 
     if (!directory[old_pd].present) kPanic;
-    PageTableEntry *old_entry = (PageTableEntry *) (directory[old_pd].address << 12);
+    PageTableEntry *old_entry = getTableEntry(old_pd);
     if (!old_entry[old_pt].present) kPanic;
 
     u32 entry = old_entry[old_pt].address << 12;
@@ -95,7 +101,7 @@ void remap(u32 virtual_old, u32 virtual_new) {
     if (!directory[new_pd].present)
         directory[new_pd].present = 1;
 
-    PageTableEntry *new_entry = (PageTableEntry *) (directory[new_pd].address << 12);
+    PageTableEntry *new_entry = getTableEntry(new_pd);
 
     new_entry[new_pt].entry = entry | 0x1;
     invlpg((const u32 *) virtual_new);
@@ -110,9 +116,8 @@ void map(u32 physical_address, u32 virtual_address) {
 
     if (!(directory[pd_index].present))
         (directory[pd_index].present) = 1;
-    invlpg((const u32 *) &directory[pd_index]);
 
-    PageTableEntry *pt = (PageTableEntry *) (directory[pd_index].address << 12);
+    PageTableEntry *pt = getTableEntry(pd_index);
 
     pt[pt_index].entry = ((u32) physical_address) | 0x01; // Present
     invlpg((const u32 *) virtual_address);

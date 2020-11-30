@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="BartOS Bochs" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile">
-    <makefile filename="$PROJECT_DIR$/Makefile" target="" workingDirectory="" arguments="run-terminal-bochs">
+    <makefile filename="$PROJECT_DIR$/Makefile" target="" workingDirectory="" arguments="run-terminal-bochs debug=1">
       <envs />
     </makefile>
     <method v="2">

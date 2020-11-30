@@ -9,7 +9,8 @@
 
 void boot_init_mem(u32 mboot_magic, MultibootInfo* mbi, u32 *kernel_start, u32 *kernel_end);
 void* ke_alloc(u32* end, u32 size);
-void map_at(PageDirectory * page_directory, void * physaddr, void * virtualaddr);
+void map_at(PageDirectory *page_directory, void *physical_adress, void *virtual_address, u16 directory_flags,
+            u16 table_flags);
 void unmap_at(PageDirectory *page_directory, void *virtualaddr);
 
 static inline void clearSpace(void* address, u32 len)

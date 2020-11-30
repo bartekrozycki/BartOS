@@ -7,5 +7,5 @@ com1: enabled=1, mode=file, dev=serial.log
 ata0-master: type=cdrom, path=os.iso, status=inserted
 boot: cdrom
 vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
-clock: sync=slowdown
-#clock: sync=realtime
+#clock: sync=slowdown
+clock: sync=realtime

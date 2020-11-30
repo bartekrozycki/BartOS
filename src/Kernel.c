@@ -8,10 +8,14 @@
 #include "keyboard.h"
 #include "pit.h"
 
-_Noreturn void Main(MultibootInfo *mbi) // TODO mbi pointer is not secure --> pointing low physical memory
+_Noreturn void Main(MultibootInfo *mbi)
 {
 	init_gdt();
 	init_idt();
+
+	/// !!!! mbi can be used ONLY above !!!!
+	/// init_paging removing lower memory map :)
+
 	init_paging();
 	init_heap();
 

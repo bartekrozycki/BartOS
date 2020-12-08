@@ -10,7 +10,6 @@
 #define FILE_LINE __FILE__ ":" STRINGIFY(__LINE__)
 #define kPanic k_panic(FILE_LINE)
 
-extern void perm_halt(void); // TODO make it in high kernel beacuse now system gonna crasshhhh
 _Noreturn static inline void k_panic(char *str)
 {
     map(0xb8000, 0xb8000);

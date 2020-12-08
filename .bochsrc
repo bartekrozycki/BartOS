@@ -1,11 +1,15 @@
 mouse: enabled=0
 megs: 256
 magic_break: enabled=1
-
 com1: enabled=1, mode=file, dev=serial.log
 
-ata0-master: type=cdrom, path=os.iso, status=inserted
+#ata0-master: type=disk, path="hd.img", mode=flat
+ata0-slave: type=cdrom, path=os.iso, status=inserted
+
 boot: cdrom
+
+#display_library: x, options="gui_debug"
+
 vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
 #clock: sync=slowdown
 clock: sync=realtime

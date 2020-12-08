@@ -11,6 +11,7 @@ CFLAGS	+= -Isrc/include/std
 CFLAGS	+= -Isrc/include/drivers
 CFLAGS	+= -Isrc/include/memory
 CFLAGS	+= -Isrc/include/interrupts
+CFLAGS  += -Isrc/include/data_structures
 
 
 ifeq ($(debug), 1)
@@ -43,7 +44,7 @@ OBJS      = $(C_OBJS) $(ASM_OBJS)
 
 .PHONY: all clean
 
-all: $(ISO) clean
+all: $(ISO)
 
 ${ISO}: ${KERNEL}
 	@mkdir -p isodir/boot/grub

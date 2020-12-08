@@ -28,7 +28,7 @@ void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end) {
  * @param status PageStatus
  * @return address of free page (0x1000)
  */
-void *k_alloc(enum PageStatus status) // TODO PageStatus arg
+void *k_alloc(enum PageStatus status)
 {
     u32 x = (u32) ms_pop();
     bitmap_set(PAGE(x), status);

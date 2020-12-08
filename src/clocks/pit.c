@@ -2,6 +2,7 @@
 #include "interrupts_handlers.h"
 #include "print.h"
 #include "io_bus.h"
+#include "thread_schelude.h"
 
 #define PIT_HZ              1193182
 #define PIT_DIVIDER_MAX     65536
@@ -35,5 +36,8 @@ void init_pit(u32 hz) {
 
 
 void pit_interrupt(InterruptSave *is) {
+    if (timer_tick % (hertz/5))
+        task_switch(is);
+
     ++timer_tick;
 }

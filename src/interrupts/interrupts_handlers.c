@@ -40,7 +40,7 @@ const char *exception_messages[32] = {
 	"Reserved",
 	"Reserved",
 };
-
+//https://www.asciiart.eu/
 void isr_handler(InterruptSave is)
 {
 	if (IsrCalls[is.int_num] != 0)
@@ -69,10 +69,14 @@ void isr_handler(InterruptSave is)
 		print(SERIAL, "      ` ,                @#\%,.@  @@                `\n");
 		print(SERIAL, "                          @@@  @@@\n");
 
-		print(SERIAL, "EXCEPTION: %s\n", exception_messages[is.int_num]);
-		print(SERIAL, "%b\n", is.err);
-		print(SERIAL, "%d\n", is.int_num);
-		print(SERIAL, "%p\n", is.eip);
+        print(SERIAL, "\n---====[ Detected page fault.\n");
+        print(SERIAL, "Error code: %b\nError Message: %s\n", is.err, exception_messages[is.int_num]);
+        print(SERIAL,
+              "Info EAX %p\nInfo EBX %p\nInfo ECX %p\nInfo EDX %p\nInfo ESP %p\nInfo EBP %p\nInfo ESI %p\nInfo EDI %p\n",
+              is.eax, is.ebx, is.ecx, is.edx, is.esp, is.ebp, is.esi, is.edi);
+        print(SERIAL, "Info EIP %p\nInfo CS %p\nInfo EFLAGS %p\nInfo USER_ESP %p\nInfo SS %p\n",
+              is.eip, is.cs, is.eflags, is.useresp, is.ss);
+        print(SERIAL, "]====---\n");
 
 		kPanic;
 	}

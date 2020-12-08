@@ -6,8 +6,8 @@ global irq%1
 irq%1:
     push 0
     push %2
-    pusha ; push all reg
-    
+    pusha ; EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI
+
     ; push segment registers
     push	ds
     push	es

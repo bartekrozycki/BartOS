@@ -7,11 +7,23 @@
 #include "terminal.h"
 #include "keyboard.h"
 #include "pit.h"
+#include "thread_schelude.h"
+
+int kernel_idle(void)
+{
+
+    for (int i = 0; i < 500; ++i)
+        print(TERMINAL, "%d \n", i);
+
+    return 0;
+}
 
 _Noreturn void Main(MultibootInfo *mbi)
 {
 	init_gdt();
-	init_idt();
+	init_idt(); /// interrupts need "sti"
+
+	*mbi = *mbi;
 
 	/// !!!! mbi can be used ONLY above !!!!
 	/// init_paging removing lower memory map :)
@@ -24,13 +36,11 @@ _Noreturn void Main(MultibootInfo *mbi)
 
     init_pit(1000);
 
-	print(TERMINAL, "\n  ____             _    ____   _____ \n");
-	print(TERMINAL, " |  _ \\           | |  / __ \\ / ____|\n");
-	print(TERMINAL, " | |_) | __ _ _ __| |_| |  | | (___  \n");
-	print(TERMINAL, " |  _ < / _` | '__| __| |  | |\\___ \\ \n");
-	print(TERMINAL, " | |_) | (_| | |  | |_| |__| |____) |\n");
-	print(TERMINAL, " |____/ \\__,_|_|   \\__|\\____/|_____/ \n\n");\
-	print(TERMINAL, "\n > ");
+    ///http://patorjk.com/software/taag/
+
+    print(TERMINAL, "Kernel Main Function started.\n");
+
+    init_task(kernel_idle);
 
     __asm__("sti");
     while (1)

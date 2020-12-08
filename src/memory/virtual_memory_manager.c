@@ -47,7 +47,7 @@ void init_paging() {
     isr_new_call(14, pageFault);
 
 
-    //clear first 8 MiB; // TODO make it better :D
+    //clear first 8 MiB;
     PageTableEntry *entry = (PageTableEntry *) (((u8*)directory + 0x1000));
     memset(entry, ' ', 1024 * sizeof(PageTableEntry));
     directory[0].present = 0;

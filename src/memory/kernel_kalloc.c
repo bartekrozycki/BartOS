@@ -3,6 +3,7 @@
 #include "physical_memory_bitmap.h"
 #include "kernel_panic.h"
 #include "multiboot.h"
+#include "acpi.h"
 
 void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end) {
     bitmap_set((u32) mbi >> 12, SYSTEM);
@@ -21,6 +22,9 @@ void init_kalloc(MultibootInfo *mbi, u32 kernel_start, u32 kernel_end) {
         } else if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
                 bitmap_set((u32) ((mmap->baselow + i) >> 12), SYSTEM);
+        else if (mmap->type == MULTIBOOT_MMAP_ACPI)
+            acpi_address = (u32 *) mmap->baselow;
+
     }
 }
 

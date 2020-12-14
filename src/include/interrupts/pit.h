@@ -35,3 +35,4 @@
 void init_pit(u32 hz);
 
 void pit_interrupt(InterruptSave *is);
+u32 read_counter (void);

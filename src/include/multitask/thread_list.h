@@ -1,0 +1,35 @@
+#pragma once
+
+#include "ints.h"
+
+typedef enum thread_status_t {
+    THREAD_NEW, // task has not run yet
+    THREAD_ACTIVE, // task is active
+    THREAD_WAITING, // task is waiting for smth
+    THREAD_TERMINATED, // task rip
+} thread_status;
+
+typedef struct thread_control_block_t {
+    u32 esp;
+    u32 cr3;
+    struct thread_control_block_t *next;
+    thread_status status;
+    //!!!!!!!!!!!!!!!
+//    u32 time_used;
+
+    u32 pid;
+} thread_control_block;
+
+typedef struct thread_list_t {
+    thread_control_block *head;
+    thread_control_block *tail;
+    u32 size;
+} thread_list;
+
+thread_list * list_thread_create(void);
+
+u32 list_thread_push_front(thread_list *list, thread_control_block *ptr);
+u32 list_thread_push_back(thread_list *list, thread_control_block *ptr);
+thread_control_block * list_thread_pop_front(thread_list *list);
+thread_control_block * list_thread_pop_back(thread_list *list);
+

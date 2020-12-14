@@ -51,10 +51,19 @@ void *malloc(size_t size) {
         };
         p_next->p_prev = p_rest;
     } else p_new->free = BLOCK_ALLOCATED;
-#ifdef DEBUG
+#ifdef DEBUG_1
     heap_debug();
 #endif
     return ((u8 *) p_new + sizeof(block_t));
+}
+void *calloc(size_t num, size_t size)
+{
+    size_t total = num * size;
+    u8* ptr = malloc(total);
+    if (!ptr) return NULL;
+    for (size_t i = 0; i < total; i += size)
+        *(ptr + i) = 0;
+    return ptr;
 }
 
 block_t *find_worst_fit(heap_t *heap, size_t min_size) {
@@ -73,16 +82,6 @@ block_t *find_worst_fit(heap_t *heap, size_t min_size) {
         return NULL; //out of memory
 
     return p_largest;
-}
-
-void heap_block_join(block_t *p_ref) {
-    p_ref->free = BLOCK_FREE;
-    p_ref->size = p_ref->size + sizeof(block_t) + p_ref->p_next->size;
-
-    block_t *p_last = p_ref->p_next->p_next;
-
-    p_ref->p_next = p_last;
-    p_last->p_prev = p_ref;
 }
 
 void free(void *ptr) {

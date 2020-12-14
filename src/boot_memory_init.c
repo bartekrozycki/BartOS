@@ -5,10 +5,7 @@
 #include "serial.h"
 #include "physical_memory_stack.h"
 #include "kernel_kalloc.h"
-
-#ifdef DEBUG
 #include "print.h"
-#endif
 
 _Noreturn extern void Main(MultibootInfo *mboot_info);
 
@@ -91,32 +88,24 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
 
 
     // M u l t i    b o o t    i n f o r m a t i o n
-
     map_at(page_directory, mbi, mbi, 0x0, 0x0);
     for (MultibootMemoryMap *mmap = (MultibootMemoryMap *) mbi->mmap_address;
          (u32) mmap < (mbi->mmap_address + mbi->mmap_length);
          mmap = (MultibootMemoryMap *) ((u32) mmap + mmap->size + sizeof(mmap->size))) {
         if (mmap->type == MULTIBOOT_MMAP_RESERVED && mmap->baselow < KERNEL_BOOT_VMA)
+        {
             for (u32 i = 0x0; i < mmap->lenlow; i += 0x1000)
                 map_at(page_directory, (u32 *) (mmap->baselow + i), (u32 *) (mmap->baselow + i), 0x0, 0x0);
+        }
     }
 
-    map_at(page_directory, (u32 *) 0xb8000, (u32 *) 0xF0000000, 0x0, 0x0);
-
     enablePaging(page_directory);
+
     init_serial();
 
     setBitmapAddress((u32 *) mem_bitmap_ptr);
     setMStackAdress((u32 *) mem_stack_ptr);
     init_kalloc(mbi, (u32) KERNEL_BOOT_VMA, kAllocSpace);
-
-#ifdef DEBUG
-    print(SERIAL, "warning Kernel space from %p to %p\n", KERNEL_BOOT_VMA, kAllocSpace);
-    print(SERIAL, "warning Page Directory: %p\n", page_directory);
-    print(SERIAL, "warning Page Table Entrys: %p\n", page_table_space);
-    print(SERIAL, "warning Memory Bitmap: %p size %p\n", mem_bitmap_ptr, ALIGN_TO(mem_bitmap_bytes, 0x1000));
-    print(SERIAL, "warning Memory Stack %p size %p\n\n", mem_stack_ptr, ALIGN_TO(mem_stack_bytes, 0x1000));
-#endif
 
     Main(mbi);
 

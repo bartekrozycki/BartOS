@@ -12,7 +12,7 @@ typedef enum PageStatus {
     FREE = 0,
     ALLOCATED,
     SYSTEM,
-    HOLE
+    ACPI
 } PageStatus;
 
 void init_bitmap(u32* address);

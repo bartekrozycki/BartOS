@@ -20,3 +20,4 @@ struct block_t {
 
 void init_heap();
 heap_t* getHeap();
+void heap_block_join(block_t *p_ref);

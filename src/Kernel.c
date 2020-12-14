@@ -7,42 +7,52 @@
 #include "terminal.h"
 #include "keyboard.h"
 #include "pit.h"
-#include "thread_schelude.h"
+#include "threads.h"
+#include "acpi.h"
 
-int kernel_idle(void)
+
+int test_task(void)
 {
 
-    for (int i = 0; i < 500; ++i)
-        print(TERMINAL, "%d \n", i);
+	for (;;)
+	{
+		lock_scheduler();
+		print(TERMINAL, "xxxxxxxx pis %d\n", IRQ_disable_counter);
+		schedule();
+		unlock_scheduler();
+	}
 
-    return 0;
+	return 0;
+}
+int test_task2(void)
+{
+
+	for (;;)
+	{
+		lock_scheduler();
+		print(TERMINAL, "xxxxxxxxxxxx :) %d\n", IRQ_disable_counter);
+		schedule();
+		unlock_scheduler();
+	}
+
+	return 0;
 }
 
-_Noreturn void Main(MultibootInfo *mbi)
+_Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPPED:)
 {
 	init_gdt();
 	init_idt(); /// interrupts need "sti"
-
-	*mbi = *mbi;
-
-	/// !!!! mbi can be used ONLY above !!!!
-	/// init_paging removing lower memory map :)
 
 	init_paging();
 	init_heap();
 
 	init_keyboard();
 	init_terminal();
+	init_acpi();
 
     init_pit(1000);
+    init_task(test_task);
 
-    ///http://patorjk.com/software/taag/
+    print(TERMINAL, "Hello main");
 
-    print(TERMINAL, "Kernel Main Function started.\n");
-
-    init_task(kernel_idle);
-
-    __asm__("sti");
-    while (1)
-        __asm__("hlt");
 }

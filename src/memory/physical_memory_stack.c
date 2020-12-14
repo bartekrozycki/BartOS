@@ -17,7 +17,7 @@ void ms_push(u32* address)
 
 u32* ms_pop()
 {
-    if (stackpointer == stack_start) kPanic;
+    if (stackpointer == stack_start) k_panic(FILE_LINE "..............your pc is to week for this OS, buy more ram ;)");
     
     return (u32 *) *(stackpointer--);
 }

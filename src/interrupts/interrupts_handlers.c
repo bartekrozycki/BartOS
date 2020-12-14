@@ -69,14 +69,15 @@ void isr_handler(InterruptSave is)
 		print(SERIAL, "      ` ,                @#\%,.@  @@                `\n");
 		print(SERIAL, "                          @@@  @@@\n");
 
-        print(SERIAL, "\n---====[ Detected page fault.\n");
+        print(SERIAL, "\n---====[ Exception.\n");
         print(SERIAL, "Error code: %b\nError Message: %s\n", is.err, exception_messages[is.int_num]);
         print(SERIAL,
               "Info EAX %p\nInfo EBX %p\nInfo ECX %p\nInfo EDX %p\nInfo ESP %p\nInfo EBP %p\nInfo ESI %p\nInfo EDI %p\n",
               is.eax, is.ebx, is.ecx, is.edx, is.esp, is.ebp, is.esi, is.edi);
         print(SERIAL, "Info EIP %p\nInfo CS %p\nInfo EFLAGS %p\nInfo USER_ESP %p\nInfo SS %p\n",
               is.eip, is.cs, is.eflags, is.useresp, is.ss);
-        print(SERIAL, "]====---\n");
+		print(SERIAL, "Int Num %d", is.int_num);
+		print(SERIAL, "]====---\n");
 
 		kPanic;
 	}

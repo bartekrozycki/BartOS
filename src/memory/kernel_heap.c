@@ -1,3 +1,4 @@
+#include "kernel_heap_malloc.h"
 #include "kernel_heap.h"
 #include "mem_map.h"
 #include "kernel_kalloc.h"
@@ -7,10 +8,14 @@
 
 static heap_t *heap = NULL;
 
-/**
- * @param kernel_end end of kernel address
- * @param directory Page directory address
- */
+///**
+// * @param kernel_end end of kernel address
+// * @param directory Page directory address
+// */
+// void *kalloc(size_t pages, u32 virtual_address)
+//{
+//
+//}
 void init_heap() {
     u32 *temp;
 
@@ -65,4 +70,14 @@ heap_t* getHeap()
 {
     if (!heap) kPanic;
     return heap;
+}
+
+void heap_block_join(block_t *p_ref) {
+    p_ref->free = BLOCK_FREE;
+    p_ref->size = p_ref->size + sizeof(block_t) + p_ref->p_next->size;
+
+    block_t *p_last = p_ref->p_next->p_next;
+
+    p_ref->p_next = p_last;
+    p_last->p_prev = p_ref;
 }

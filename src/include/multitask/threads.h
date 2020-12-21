@@ -5,24 +5,33 @@
 #include "thread_list.h"
 
 ///// !!!!!!!!!!!!!!!!
-extern i32 IRQ_disable_counter;
+//extern i32 IRQ_disable_counter;
 
 extern thread_control_block *running_thread;
 
-extern thread_list *active;
-extern thread_list *waiting;
-extern thread_list *terminated;
+extern thread_list *threads_ready;
+extern thread_list *threads_sleeping;
+extern thread_list *threads_terminated;
 ///// !!!!!!!!!!!!!!!!
 
-extern void switch_to_thread(thread_control_block **current_thread, thread_control_block *next_thread);
+extern void switch_to_thread
+(thread_control_block **current_thread, thread_control_block *next_thread) __attribute__((cdecl));
 
-void init_task(int (*task_ptr)(void));
+void init_task();
+
+
+void schedule(void);
 
 void lock_scheduler(void);
 void unlock_scheduler(void);
-void schedule(void);
 
-void update_time_used(void);
+void block_task(thread_status reason);
+void unblock_task(thread_control_block * task);
+
+void lock_stuff(void);
+void unlock_stuff(void);
+
+void sleep(u32 seconds);
 
 void thread_entry(int (*eip)(void));
 void thread_exit(void);

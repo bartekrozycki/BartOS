@@ -1,4 +1,5 @@
 global switch_to_thread
+extern postpone_task_switches_counter
 
 struc TCB
     .ESP:    resb   4
@@ -14,6 +15,11 @@ endstruc
 ;
 ;Source https://wiki.osdev.org/Brendan%27s_Multi-tasking_Tutorial
 switch_to_thread:
+    cmp dword [postpone_task_switches_counter], 0
+    je .continue
+    mov dword [postpone_task_switches_counter], 1
+    ret
+.continue:
     ;Save previous task's state
 
     ;Notes:

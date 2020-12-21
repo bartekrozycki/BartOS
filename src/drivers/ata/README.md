@@ -10,7 +10,7 @@
 |4| RW| Partial Disk Sector address. |
 |5| RW| Partial Disk Sector address.|
 |6| RW| Used to select a drive and/or head. Supports extra address/flag bits.|
-|7| R | Used to read the current status.|
+|7| R | Used to read the current state.|
 |7| W | Used to send ATA commands to the device|
 
 #ATA Command Matrix

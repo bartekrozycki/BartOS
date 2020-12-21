@@ -11,31 +11,24 @@
 #include "acpi.h"
 
 
-int test_task(void)
+int test_task2(void)
 {
-
 	for (;;)
 	{
+		sleep(1);
 		lock_scheduler();
-		print(TERMINAL, "xxxxxxxx pis %d\n", IRQ_disable_counter);
+		print(TERMINAL, "+1 byczq :)");
 		schedule();
 		unlock_scheduler();
 	}
 
 	return 0;
 }
-int test_task2(void)
+
+_Noreturn void idle(void)
 {
-
-	for (;;)
-	{
-		lock_scheduler();
-		print(TERMINAL, "xxxxxxxxxxxx :) %d\n", IRQ_disable_counter);
-		schedule();
-		unlock_scheduler();
-	}
-
-	return 0;
+    for (;;)
+            __asm__("hlt");
 }
 
 _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPPED:)
@@ -50,9 +43,9 @@ _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPP
 	init_terminal();
 	init_acpi();
 
-    init_pit(1000);
-    init_task(test_task);
+    init_task();
+	init_pit(1000);
 
-    print(TERMINAL, "Hello main");
-
+    idle();
 }
+

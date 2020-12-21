@@ -85,14 +85,14 @@ void isr_handler(InterruptSave is)
 
 void irq_handler(InterruptSave is)
 {
+	out(PIC1, PIC_EOI);
+	if (is.int_num >= 40) // PIC2 STARTS FROM GATE 40
+		out(PIC2, PIC_EOI);
+
 	IrqCall caller = IrqCalls[is.int_num - 32];
 
 	if (caller)
 		caller(&is);
-
-	out(PIC1, PIC_EOI);
-	if (is.int_num >= 40) // PIC2 STARTS FROM GATE 40
-		out(PIC2, PIC_EOI);
 }
 
 void irq_new_call(u8 irq_number, IrqCall caller)

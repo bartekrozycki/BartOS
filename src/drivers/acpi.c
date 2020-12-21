@@ -7,6 +7,6 @@ void init_acpi(void)
 {
     if (!acpi_address) return;
 
-    print(TERMINAL, "Found ACPI at %p... maybe later ll be used\n", acpi_address);
+    print(SERIAL, "Found ACPI at %p... maybe later ll be used\n", acpi_address);
 
 }

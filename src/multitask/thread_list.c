@@ -94,3 +94,25 @@ thread_control_block * list_thread_pop_back(thread_list *list)
     return back;
 }
 
+thread_control_block * list_thread_remove(thread_list *list, thread_control_block *ptr)
+{
+    if (!list || !ptr)
+        return NULL;
+
+    if (ptr == list->head) return list_thread_pop_front(list);
+    else if (ptr == list->tail) return list_thread_pop_back(list);
+
+    thread_control_block *prev = NULL;
+    for (thread_control_block *i = list->head; i != list->tail ; prev = i,  i = i->next)
+    {
+        if (i == ptr)
+        {
+            prev->next = prev->next->next;
+            i->next = NULL;
+
+            return i;
+        }
+    }
+    --list->size;
+    return NULL;
+}

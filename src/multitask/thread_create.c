@@ -20,9 +20,8 @@ thread_control_block *thread_create(int (*eip)(void))
     if(!thread) return NULL;
 
     thread->esp = (u32) calloc(MIB(1), 1);
-    thread->esp += MIB(5);
+    thread->esp += MIB(1);
     thread->esp -= sizeof(struct thread_stack_t);
-    thread->status = THREAD_NEW;
 
     struct thread_stack_t *ptr = (struct thread_stack_t *) (thread->esp);
     ptr->ebp = 0x0;

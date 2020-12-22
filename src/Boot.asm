@@ -28,6 +28,9 @@ multiboot_header:
     dd	MAGIC
     dd	FLAGS
     dd	CHKSUM
+    dd  0,0,0,0,0
+    dd  0
+    dd  1024,   768,    32
 
 _start:
 

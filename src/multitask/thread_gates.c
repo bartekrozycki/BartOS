@@ -9,6 +9,5 @@ void thread_entry()
 
 void thread_exit(void)
 {
-    print(TERMINAL, "  - - - [ dead kurwa twoja stara nie zyje ] - - - ");
     block_task(THREAD_TERMINATED);
 }

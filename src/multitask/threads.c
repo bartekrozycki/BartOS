@@ -2,7 +2,6 @@
 #include "kernel_panic.h"
 #include "print.h"
 #include "kernel_heap_malloc.h"
-#include "pit.h"
 
 #define GET_CR3(to) __asm__ ("movl %%cr3, %0": "=r"(to):)
 

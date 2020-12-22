@@ -14,7 +14,7 @@
 int test_task2(void)
 {
     u32 counter = 0;
-    for (;;)
+    for (; counter < 5;)
     {
         lock_postpone();
         print_at(TERMINAL, 0, 0, "Timer every 1000ms %d", counter);

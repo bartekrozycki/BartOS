@@ -14,10 +14,8 @@ typedef struct thread_control_block_t {
     u32 cr3;
     struct thread_control_block_t *next;
     thread_status state;
-    u32 paused_until;
-    //!!!!!!!!!!!!!!!
-//    u32 time_used;
-
+    i32 paused_until;
+    i32 time_used;
     u32 pid;
 } thread_control_block;
 

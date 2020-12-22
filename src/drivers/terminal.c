@@ -11,7 +11,19 @@ static u8       terminal_color;
 
 static u16*     terminal_mem;
 
-
+void terminal_pos(size_t x, size_t y)
+{
+    terminal_pos_col = x;
+    terminal_pos_row = y;
+}
+size_t getX()
+{
+    return terminal_pos_col;
+}
+size_t getY()
+{
+    return terminal_pos_row;
+}
 void terminal_cursor_set(unsigned char row, unsigned char col)
 {
     unsigned short pos = row * VGA_WIDTH + col;

@@ -61,7 +61,7 @@ void *calloc(size_t num, size_t size)
     size_t total = num * size;
     u8* ptr = malloc(total);
     if (!ptr) return NULL;
-    for (size_t i = 0; i < total; i += size)
+    for (size_t i = 0; i < total; i++)
         *(ptr + i) = 0;
     return ptr;
 }

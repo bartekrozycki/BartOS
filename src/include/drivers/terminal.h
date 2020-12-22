@@ -49,3 +49,7 @@ void terminal_putc(char c);
 void terminal_write(const char* data, u32 size);
 int terminal_writestring(const char* data);
 int terminal_write_base(u32 d, u32 base);
+
+void terminal_pos(size_t x, size_t y);
+size_t getX();
+size_t getY();

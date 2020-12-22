@@ -13,22 +13,30 @@
 
 int test_task2(void)
 {
-	for (;;)
-	{
-		sleep(1);
-		lock_scheduler();
-		print(TERMINAL, "+1 byczq :)");
-		schedule();
-		unlock_scheduler();
-	}
+    u32 counter = 0;
+    for (;;)
+    {
+        lock_postpone();
+        print_at(TERMINAL, 0, 0, "Timer every 1000ms %d", counter);
+        unlock_postpone();
+        sleep(1);
+        counter++;
+    }
 
-	return 0;
+    return 0;
 }
 
 _Noreturn void idle(void)
 {
+    u32 counter = 0;
     for (;;)
-            __asm__("hlt");
+    {
+        lock_postpone();
+        print_at(TERMINAL, 25, 0, "Timer every 200ms %d", counter);
+        unlock_postpone();
+        mili_sleep(200);
+        counter++;
+    }
 }
 
 _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPPED:)

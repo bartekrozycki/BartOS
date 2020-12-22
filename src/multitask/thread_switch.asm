@@ -1,11 +1,17 @@
 global switch_to_thread
 extern postpone_task_switches_counter
+extern update_time_used
+
+THREAD_RUNNING      equ         0
+THREAD_PAUSED       equ         1
+THREAD_SLEEPING     equ         2
+THREAD_TERMINATED   equ         3
 
 struc TCB
     .ESP:    resb   4
     .CR3:    resb   4
     .NEXT:   resb   4
-    .STATUS: resb   4
+    .STATE: resb   4
 endstruc
 
 ;C declaration:
@@ -16,10 +22,11 @@ endstruc
 ;Source https://wiki.osdev.org/Brendan%27s_Multi-tasking_Tutorial
 switch_to_thread:
     cmp dword [postpone_task_switches_counter], 0
-    je .continue
+    je .swap
     mov dword [postpone_task_switches_counter], 1
     ret
-.continue:
+
+.swap:
     ;Save previous task's state
 
     ;Notes:
@@ -32,13 +39,15 @@ switch_to_thread:
     push edi
     push ebp
 
-    mov edi, [ esp + ( 4 + 1 ) * 4 ]
-    mov edi, [ edi ]
+    mov edi, [ esp + ( 4 + 1 ) * 4 ] ; previous task tcb  ( ** )
+    mov edi, [ edi ]                 ; previous task tcb  ( ** )
+
+    call update_time_used; update time used
     mov [edi + TCB.ESP], esp
 
     ;Load next task's state
 
-    mov esi, [esp + ( 4 + 2 ) * 4]
+    mov esi, [esp + ( 4 + 2 ) * 4] ; next task tcb ( * )
     mov edi, [esp + ( 4 + 1 ) * 4]
     mov [edi], esi
 

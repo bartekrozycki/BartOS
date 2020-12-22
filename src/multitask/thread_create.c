@@ -10,18 +10,22 @@ struct thread_stack_t {
     u32 esi;
     u32 ebx;
     u32 eip_ret1;
-    u32 eip_ret3;
     u32 eip_ret2;
+    u32 eip_ret3;
 };
+
+static u32 thread_create_counter = 1; // thats bad
 
 thread_control_block *thread_create(int (*eip)(void))
 {
-    thread_control_block *thread = malloc(sizeof(thread_control_block));
+    thread_control_block *thread = calloc(1, sizeof(thread_control_block));
     if(!thread) return NULL;
 
     thread->esp = (u32) calloc(MIB(1), 1);
     thread->esp += MIB(1);
     thread->esp -= sizeof(struct thread_stack_t);
+    thread->state = THREAD_RUNNING;
+    thread->pid = thread_create_counter++;
 
     struct thread_stack_t *ptr = (struct thread_stack_t *) (thread->esp);
     ptr->ebp = 0x0;
@@ -34,6 +38,10 @@ thread_control_block *thread_create(int (*eip)(void))
     ptr->eip_ret3 = (u32) thread_exit;
 
     GET_CR3(thread->cr3);
+
+    lock_postpone();
+    list_thread_push_back(threads_ready, thread);
+    unlock_postpone();
 
     return thread;
 }

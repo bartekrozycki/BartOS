@@ -8,30 +8,41 @@
 
 typedef thread_control_block* TCB_Array;
 
-thread_control_block *running_thread;
+thread_control_block *current_running_tcb;
 thread_control_block *kernel_thread;
 
 thread_list *threads_ready;
 thread_list *threads_sleeping;
 thread_list *threads_terminated;
 
-
-
+int siema(void)
+{
+    u32 counter = 0;
+    for (;;)
+    {
+        lock_postpone();
+        print_at(TERMINAL, 50, 0, "Timer every 200ms %d", counter);
+        unlock_postpone();
+        mili_sleep(200);
+        counter++;
+    }
+}
 void init_task()
 {
     threads_ready = list_thread_create();
     threads_sleeping = list_thread_create();
     threads_terminated = list_thread_create();
 
-    running_thread = malloc(sizeof(thread_control_block)); // idle task
-    GET_CR3(running_thread->cr3);
-    running_thread->pid = 0; // kernel
-    kernel_thread = running_thread;
+    current_running_tcb = malloc(sizeof(thread_control_block)); // kernel
+    GET_CR3(current_running_tcb->cr3);
+    current_running_tcb->pid = 0; // kernel
+    current_running_tcb->state = THREAD_RUNNING;
+    kernel_thread = current_running_tcb;
 
-    thread_control_block *test_task22  = thread_create(test_task2);
-    test_task22->pid = 1;
-
-    list_thread_push_back(threads_ready, test_task22);
+    thread_control_block *first  = thread_create(test_task2);
+    first->pid = 1;
+    thread_control_block *second  = thread_create(siema);
+    second->pid = 2;
 }
 
 

@@ -18,52 +18,72 @@ void unlock_scheduler(void)
             __asm__("sti");
 }
 
-// scheduler should be locked before calling
+/**
+ * new thread
+ * lock ~ cli
+ * schedule
+ * .........task switch ~ other task
+ * .........task_entry -> unlock
+ * .........Interrupt -> lock
+ * unlock
+ * ......................................
+ * [PIT Interrupt]
+ * ~ cli
+ * ~ send EOI
+ * ~ handle interrupt
+ * lock
+ * schedule
+ * task switch
+ * unlock -----------> if task has been switched again,
+ *                     continuation of this will start here
+ *                     If task is new it has thread_entry that unlock scheduler
+**/
+volatile i32 idleCPUTime = 0;
+
 void schedule(void)
 {
     if(postpone_task_switches_counter != 0) {
         task_switches_postponed_flag = 1;
         return;
     }
-    if (running_thread != NULL)
+
+    thread_control_block *next = list_thread_pop_front(threads_ready);
+
+    //    print(TERMINAL, "%d id %d status %d   - ", timer_tick, current_running_tcb->pid, current_running_tcb->state);
+    //    print(TERMINAL, "%d id  %d status %d\n",timer_tick, next->pid, next->state);
+
+    if (next != NULL)
     {
-        thread_control_block *thread = list_thread_pop_front(threads_ready);
-        if (running_thread->state == THREAD_PAUSED)
-            list_thread_push_back(threads_sleeping, running_thread);
-        else
-            list_thread_push_back(threads_ready, running_thread);
+        if (current_running_tcb->state == THREAD_RUNNING)
+            list_thread_push_back(threads_ready, current_running_tcb);
 
-        switch_to_thread(&running_thread, thread);
+        switch_to_thread(&current_running_tcb, next);
     }
-}
-
-void block_task(thread_status reason) {
-    lock_scheduler();
-    running_thread->state = THREAD_PAUSED;
-    schedule(); // schedule push thread to paused list if state == thread_paused
-    unlock_scheduler();
-}
-void unblock_task(thread_control_block * task) {
-    lock_scheduler();
-
-    if (list_thread_remove(threads_sleeping, task) == NULL)
-        k_panic("unblocking not waiting thread ?");
-
-    if((threads_ready->size < 1) || (running_thread->pid == 0)) {
-        list_thread_push_back(threads_ready, running_thread);
-        switch_to_thread(&running_thread, task);
-    }
+    else if (current_running_tcb->state == THREAD_RUNNING)
+        return;
     else
-        list_thread_push_back(threads_ready, task);
+    {
+        thread_control_block *task = current_running_tcb;
+        current_running_tcb = (thread_control_block *)0;
 
-    unlock_scheduler();
+        do {
+            __asm__("sti");
+            __asm__("hlt");
+            __asm__("cli");
+            next = list_thread_pop_front(threads_ready);
+        } while (next == (thread_control_block *)0);
+
+        current_running_tcb = task;
+        if (next != current_running_tcb)
+            switch_to_thread(&current_running_tcb, next);
+    }
 }
-void lock_stuff(void) {
+void lock_postpone(void) {
     __asm__("cli");
     IRQ_disable_counter++;
     postpone_task_switches_counter++;
 }
-void unlock_stuff(void) {
+void unlock_postpone(void) {
     postpone_task_switches_counter--;
     if(postpone_task_switches_counter == 0) {
         if(task_switches_postponed_flag != 0) {
@@ -71,8 +91,24 @@ void unlock_stuff(void) {
             schedule();
         }
     }
-    IRQ_disable_counter--;              // unlock scheduler
-    if(IRQ_disable_counter == 0) {      // unlock scheduler
-        __asm__("sti");                 // unlock scheduler
-    }                                   // unlock scheduler
+    IRQ_disable_counter--;
+    if(IRQ_disable_counter == 0)
+        __asm__("sti");
+}
+
+void block_task(thread_status reason) {
+    lock_postpone();
+    {
+        current_running_tcb->state = reason;
+        schedule();
+    }
+    unlock_postpone();
+}
+void unblock_task(thread_control_block * task) {
+    lock_postpone();
+    {
+        list_thread_push_back(threads_ready, task);
+        task->state = THREAD_RUNNING;
+    }
+    unlock_postpone();
 }

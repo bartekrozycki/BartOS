@@ -8,3 +8,4 @@ typedef enum STREAM{
 } STREAM;
 
 u32 print(STREAM stream, char *format, ...);
+u32 print_at(STREAM stream,size_t x, size_t y, char *format, ...);

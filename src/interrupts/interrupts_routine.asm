@@ -4,7 +4,8 @@
 %macro IRQ 2
 global irq%1
 irq%1:
-    push 0
+;push eflags
+    push 0 ;; err
     push %2
     pusha ; EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI
 

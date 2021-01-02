@@ -17,6 +17,8 @@ extern volatile i32 last_read_tick;
 extern volatile i32 idleCPUTime;
 extern volatile i32 timer_tick;
 extern volatile i32 last_read_tick;
+
+extern thread_control_block *butler;
 ///// !!!!!!!!!!!!!!!!
 
 extern void switch_to_thread (thread_control_block **current_thread,
@@ -34,7 +36,7 @@ void block_task(thread_status reason);
 void unblock_task(thread_control_block * task);
 
 void lock_postpone(void);
-void unlock_postpone(void);
+void unlock_postpone_and_schedule(void);
 
 void mili_sleep(i32 mili_seconds);
 void sleep(i32 seconds);
@@ -43,9 +45,14 @@ void update_time_used(void);
 
 extern void pit_interrupt(InterruptSave *is);
 
+void terminate_task(void);
+
 void thread_entry();
 void thread_exit(void);
 
-thread_control_block *thread_create(int (*eip)(void));
+thread_control_block *thread_create(int (*func)(void));
+void thread_free(thread_control_block *tcb);
+
+_Noreturn void butler_mr_cleaner(void);
 
 int test_task2(void);

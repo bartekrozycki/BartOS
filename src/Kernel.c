@@ -8,35 +8,30 @@
 #include "keyboard.h"
 #include "pit.h"
 #include "threads.h"
+#include "thread_semaphore.h"
 #include "acpi.h"
 
-
-int test_task2(void)
+SEMAPHORE *test;
+int test1(void)
 {
-    u32 counter = 0;
-    for (; counter < 5;)
+    for (int i = 0; i < 10; i++)
     {
-        lock_postpone();
-        print_at(TERMINAL, 0, 0, "Timer every 1000ms %d", counter);
-        unlock_postpone();
-        sleep(1);
-        counter++;
+        lock_mutex(test);
+        mili_sleep(500);
+        print(TERMINAL,"Ala ma ");
+        unlock_mutex(test);
     }
-
     return 0;
 }
-
-_Noreturn void idle(void)
+int test2(void)
 {
-    u32 counter = 0;
-    for (;;)
+    for (int i = 0; i < 10; i++)
     {
-        lock_postpone();
-        print_at(TERMINAL, 25, 0, "Timer every 200ms %d", counter);
-        unlock_postpone();
-        mili_sleep(200);
-        counter++;
+        lock_mutex(test);
+        print(TERMINAL,"kota\n");
+        unlock_mutex(test);
     }
+    return 0;
 }
 
 _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPPED:)
@@ -54,6 +49,22 @@ _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPP
     init_task();
 	init_pit(1000);
 
-    idle();
+	test = create_mutex();
+
+	lock_mutex(test);
+    print(TERMINAL, "Creating tasks.. start\n");
+    print(TERMINAL, "task #1\n");
+    thread_create(test1);
+    print(TERMINAL, "#1 created\n");
+
+    print(TERMINAL, "Creating task #2..\n");
+    thread_create(test2);
+    print(TERMINAL, "Creating task #2 created..\n");
+
+    print(TERMINAL, "Creating tasks.. end\n");
+    unlock_mutex(test);
+
+
+    butler_mr_cleaner();
 }
 

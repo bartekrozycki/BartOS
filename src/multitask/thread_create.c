@@ -16,14 +16,21 @@ struct thread_stack_t {
 
 static u32 thread_create_counter = 1; // thats bad
 
-thread_control_block *thread_create(int (*eip)(void))
+void thread_free(thread_control_block *tcb)
+{
+    free((void *) tcb->stack_alloc_ptr);
+    free(tcb);
+}
+thread_control_block *thread_create(int (*func)(void))
 {
     thread_control_block *thread = calloc(1, sizeof(thread_control_block));
     if(!thread) return NULL;
 
-    thread->esp = (u32) calloc(MIB(1), 1);
-    thread->esp += MIB(1);
+    thread->stack_alloc_ptr = (u32) calloc(MIB(1), 1);
+
+    thread->esp = (u32) (thread->stack_alloc_ptr + MIB(1));
     thread->esp -= sizeof(struct thread_stack_t);
+
     thread->state = THREAD_RUNNING;
     thread->pid = thread_create_counter++;
 
@@ -34,14 +41,14 @@ thread_control_block *thread_create(int (*eip)(void))
     ptr->ebx = 0x0;
 
     ptr->eip_ret1 = (u32) thread_entry;
-    ptr->eip_ret2 = (u32) eip;
+    ptr->eip_ret2 = (u32) func;
     ptr->eip_ret3 = (u32) thread_exit;
 
     GET_CR3(thread->cr3);
 
     lock_postpone();
     list_thread_push_back(threads_ready, thread);
-    unlock_postpone();
+    unlock_postpone_and_schedule();
 
     return thread;
 }

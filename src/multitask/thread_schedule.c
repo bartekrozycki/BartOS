@@ -49,12 +49,9 @@ void schedule(void)
 
     thread_control_block *next = list_thread_pop_front(threads_ready);
 
-    //    print(TERMINAL, "%d id %d status %d   - ", timer_tick, current_running_tcb->pid, current_running_tcb->state);
-    //    print(TERMINAL, "%d id  %d status %d\n",timer_tick, next->pid, next->state);
-
     if (next != NULL)
     {
-        if (current_running_tcb->state == THREAD_RUNNING)
+        if (current_running_tcb->state == THREAD_RUNNING) // if thread has other status than RUNNING dont push back it to queue of running task
             list_thread_push_back(threads_ready, current_running_tcb);
 
         switch_to_thread(&current_running_tcb, next);
@@ -83,7 +80,7 @@ void lock_postpone(void) {
     IRQ_disable_counter++;
     postpone_task_switches_counter++;
 }
-void unlock_postpone(void) {
+void unlock_postpone_and_schedule(void) {
     postpone_task_switches_counter--;
     if(postpone_task_switches_counter == 0) {
         if(task_switches_postponed_flag != 0) {
@@ -102,7 +99,7 @@ void block_task(thread_status reason) {
         current_running_tcb->state = reason;
         schedule();
     }
-    unlock_postpone();
+    unlock_postpone_and_schedule();
 }
 void unblock_task(thread_control_block * task) {
     lock_postpone();
@@ -110,5 +107,5 @@ void unblock_task(thread_control_block * task) {
         list_thread_push_back(threads_ready, task);
         task->state = THREAD_RUNNING;
     }
-    unlock_postpone();
+    unlock_postpone_and_schedule();
 }

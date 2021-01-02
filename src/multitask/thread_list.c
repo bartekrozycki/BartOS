@@ -1,5 +1,7 @@
 #include "thread_list.h"
 #include "kernel_heap_malloc.h"
+#include "threads.h"
+#include "print.h"
 
 thread_list * list_thread_create(void)
 {
@@ -92,6 +94,24 @@ thread_control_block * list_thread_pop_back(thread_list *list)
 
     --list->size;
     return back;
+}
+
+
+void list_thread_display(thread_list *list)
+{
+    thread_control_block *ptr = list->head;
+
+    lock_postpone();
+    {
+        print(TERMINAL, "================================\n");
+        while (ptr != NULL)
+        {
+            print(TERMINAL, "#%d status %d\n", ptr->pid, ptr->state);
+            ptr = ptr->next;
+        }
+        print(TERMINAL, "================================\n");
+    }
+    unlock_postpone_and_schedule();
 }
 
 thread_control_block * list_thread_remove(thread_list *list, thread_control_block *ptr)

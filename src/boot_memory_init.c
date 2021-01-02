@@ -17,6 +17,7 @@ void boot_init_mem(u32 mboot_magic, MultibootInfo *mbi, u32 *kernel_start, u32 *
     if ((u32) kernel_end & 0xFFF)
         kPanic;
 
+
     u32 kernelStart = (u32) kernel_start;
     u32 kernelEnd = (u32) kernel_end;
     u32 kAllocSpace = (u32) kernel_end;

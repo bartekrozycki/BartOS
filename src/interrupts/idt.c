@@ -110,7 +110,7 @@ void init_idt(void)
 	out(PIC1_DATA, 0xFB); // mask all without pic1_irq2 PIC SLAVE
 	out(PIC2_DATA, 0xFC); // mask all without pic2_irq1 PIC SLAVE
 
-	idt_set_gate(0, (u32)isr0, 0x08, 0x8E);
+	idt_set_gate(0, (u32)isr0, 0x08, 0x8E); // 0b10001110 flags => Present | 32 bit interrupt gate
 	idt_set_gate(1, (u32)isr1, 0x08, 0x8E);
 	idt_set_gate(2, (u32)isr2, 0x08, 0x8E);
 	idt_set_gate(3, (u32)isr3, 0x08, 0x8E);

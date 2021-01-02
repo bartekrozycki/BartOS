@@ -44,7 +44,7 @@ void terminal_cursor_enable(uint8_t cursor_start, uint8_t cursor_end)
 
 void init_terminal(void)
 {
-    map(0xb8000, TERMINAL_VIDEO_MEMORY_ADDRESS);
+    map(0xb8000, (u32) TERMINAL_VIDEO_MEMORY_ADDRESS);
 
     terminal_pos_row = 0;
     terminal_pos_col = 0;

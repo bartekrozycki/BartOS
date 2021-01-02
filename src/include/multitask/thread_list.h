@@ -17,6 +17,7 @@ typedef struct thread_control_block_t {
     i32 paused_until;
     i32 time_used;
     u32 pid;
+    u32 stack_alloc_ptr;
 } thread_control_block;
 
 typedef struct thread_list_t {
@@ -32,4 +33,5 @@ u32 list_thread_push_back(thread_list *list, thread_control_block *ptr);
 thread_control_block * list_thread_pop_front(thread_list *list);
 thread_control_block * list_thread_pop_back(thread_list *list);
 thread_control_block * list_thread_remove(thread_list *list, thread_control_block *ptr);
+void list_thread_display(thread_list *list);
 

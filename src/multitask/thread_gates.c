@@ -9,5 +9,5 @@ void thread_entry()
 
 void thread_exit(void)
 {
-    block_task(THREAD_TERMINATED);
+    terminate_task();
 }

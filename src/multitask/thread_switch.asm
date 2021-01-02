@@ -15,7 +15,8 @@ struc TCB
 endstruc
 
 ;C declaration:
-;   void switch_to_task(thread_control_block *next_thread);
+;
+;   switch_to_thread (thread_control_block **current_thread, thread_control_block *next_thread)
 ;
 ;WARNING: Caller is expected to disable IRQs before calling, and enable IRQs again after function returns
 ;

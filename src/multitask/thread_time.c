@@ -35,7 +35,7 @@ void pit_interrupt(InterruptSave *is) {
             if (timer_tick % 3 == 0)
                 schedule();
     }
-    unlock_postpone();
+    unlock_postpone_and_schedule();
 }
 
 void update_time_used(void)
@@ -54,7 +54,7 @@ void mili_sleep_until(i32 until)
     lock_postpone();
 
     if(until < timer_tick) {
-        unlock_postpone();
+        unlock_postpone_and_schedule();
         return;
     }
 
@@ -62,7 +62,7 @@ void mili_sleep_until(i32 until)
     list_thread_push_back(threads_sleeping, current_running_tcb);
 
 
-    unlock_postpone();
+    unlock_postpone_and_schedule();
 
     block_task(THREAD_SLEEPING);
     return;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "terminal.h"
+#include "vga.h"
 #include "ints.h"
 
 #define ASSERT(str, size) \

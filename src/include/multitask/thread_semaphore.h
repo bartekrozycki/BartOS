@@ -6,11 +6,11 @@
 
 #include "thread_list.h"
 
-typedef struct {
+typedef struct SEMAPHORE_T{
     int max_count;
     int current_count;
-    thread_control_block *first_waiting_task;
-    thread_control_block *last_waiting_task;
+    struct thread_control_block_t *first_waiting_task;
+    struct thread_control_block_t *last_waiting_task;
 } SEMAPHORE;
 
 SEMAPHORE *create_semaphore(int max_count);

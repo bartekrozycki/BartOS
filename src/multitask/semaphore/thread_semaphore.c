@@ -5,6 +5,7 @@
 #include "thread_semaphore.h"
 #include "threads.h"
 #include "kernel_heap_malloc.h"
+#include "print.h"
 
 //
 //  create semaphore & mutex
@@ -30,6 +31,8 @@ SEMAPHORE *create_mutex(void)
 //
 //  lock semaphore & mutex
 //
+#define sem_wait(sem) lock_semaphore(sem)
+
 void lock_semaphore(SEMAPHORE *semaphore) {
     lock_postpone();
     {
@@ -55,6 +58,8 @@ void lock_mutex(SEMAPHORE *semaphore)
 //
 //  unlock semaphore & mutex
 //
+#define sem_post(sem) lock_semaphore(sem)
+
 void unlock_semaphore(SEMAPHORE *semaphore) {
     lock_postpone();
     {

@@ -1,37 +1,31 @@
 #include "multiboot.h"
 #include "gdt.h"
-#include "idt.h"
+#include "interrupt_descriptor.h"
 #include "print.h"
 #include "kernel_heap.h"
 #include "kernel_panic.h"
-#include "terminal.h"
+#include "vga.h"
 #include "keyboard.h"
 #include "pit.h"
 #include "threads.h"
 #include "thread_semaphore.h"
 #include "acpi.h"
+#include "kernel_heap_malloc.h"
 
 SEMAPHORE *test;
-int test1(void)
+
+_Noreturn int test1(void)
 {
-    for (int i = 0; i < 10; i++)
+    print(TERMINAL, "Test 1\n");
+    while (1)
     {
-        lock_mutex(test);
-        mili_sleep(500);
-        print(TERMINAL,"Ala ma ");
-        unlock_mutex(test);
+	   lock_key_queue();
+		KBP *packet = key_queue_pop();
+
+		print(TERMINAL, "%c - %d \n", packet->key_code);
+
+		free(packet);
     }
-    return 0;
-}
-int test2(void)
-{
-    for (int i = 0; i < 10; i++)
-    {
-        lock_mutex(test);
-        print(TERMINAL,"kota\n");
-        unlock_mutex(test);
-    }
-    return 0;
 }
 
 _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPPED:)
@@ -51,19 +45,7 @@ _Noreturn void Main(MultibootInfo *mbi) // DO NOT USE MBI BECAUSE IT IS NOT MAPP
 
 	test = create_mutex();
 
-	lock_mutex(test);
-    print(TERMINAL, "Creating tasks.. start\n");
-    print(TERMINAL, "task #1\n");
-    thread_create(test1);
-    print(TERMINAL, "#1 created\n");
-
-    print(TERMINAL, "Creating task #2..\n");
-    thread_create(test2);
-    print(TERMINAL, "Creating task #2 created..\n");
-
-    print(TERMINAL, "Creating tasks.. end\n");
-    unlock_mutex(test);
-
+	current_focus_tcb = thread_create(test1);
 
     butler_mr_cleaner();
 }

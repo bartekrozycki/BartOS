@@ -4,3 +4,4 @@
 isodir
 *.txt
 .gitignore
+*.map

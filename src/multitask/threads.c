@@ -8,6 +8,7 @@
 typedef thread_control_block* TCB_Array;
 
 thread_control_block *current_running_tcb;
+thread_control_block *current_focus_tcb;
 thread_control_block *butler;
 
 thread_list *threads_ready;
@@ -22,7 +23,10 @@ void init_task()
     threads_terminated = list_thread_create();
 
     current_running_tcb = malloc(sizeof(thread_control_block)); // kernel
+    current_focus_tcb = current_running_tcb;
+
     GET_CR3(current_running_tcb->cr3);
+
     current_running_tcb->pid = 0; // kernel
     current_running_tcb->state = THREAD_RUNNING;
 

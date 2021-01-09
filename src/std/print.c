@@ -1,6 +1,6 @@
 #include "print.h"
 #include "serial.h"
-#include "terminal.h"
+#include "vga.h"
 #include "lib.h"
 
 

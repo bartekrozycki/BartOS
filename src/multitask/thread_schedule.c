@@ -2,9 +2,9 @@
 #include "print.h"
 #include "kernel_panic.h"
 
-static volatile i32 IRQ_disable_counter = 0;
-volatile i32 postpone_task_switches_counter = 0;
-volatile i32 task_switches_postponed_flag = 0;
+i32 IRQ_disable_counter = 0;
+i32 postpone_task_switches_counter = 0;
+i32 task_switches_postponed_flag = 0;
 
 void lock_scheduler(void)
 {
@@ -80,11 +80,11 @@ void lock_postpone(void) {
     IRQ_disable_counter++;
     postpone_task_switches_counter++;
 }
-void unlock_postpone_and_schedule(void) {
+void unlock_postpone_and_schedule(void) { // if (counter == 0 && flag == 1) <=> schedule
     postpone_task_switches_counter--;
     if(postpone_task_switches_counter == 0) {
         if(task_switches_postponed_flag != 0) {
-            task_switches_postponed_flag = 0;
+            task_switches_postponed_flag = 0; // 0 1 0
             schedule();
         }
     }
@@ -94,12 +94,12 @@ void unlock_postpone_and_schedule(void) {
 }
 
 void block_task(thread_status reason) {
-    lock_postpone();
+    lock_postpone(); // 2 2 0
     {
         current_running_tcb->state = reason;
-        schedule();
+        schedule(); // 2 2 1
     }
-    unlock_postpone_and_schedule();
+    unlock_postpone_and_schedule();// 1 1 1
 }
 void unblock_task(thread_control_block * task) {
     lock_postpone();

@@ -7,7 +7,13 @@
 ///// !!!!!!!!!!!!!!!!
 //extern i32 IRQ_disable_counter;
 
+
+extern i32 IRQ_disable_counter;
+extern i32 postpone_task_switches_counter;
+extern i32 task_switches_postponed_flag;
+
 extern thread_control_block *current_running_tcb;
+extern thread_control_block *current_focus_tcb;
 
 extern thread_list *threads_ready;
 extern thread_list *threads_sleeping;

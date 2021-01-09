@@ -22,19 +22,18 @@ void cleanup_terminated_task(thread_control_block * task) {
 _Noreturn void butler_mr_cleaner(void) {
     for (;;)
     {
-        lock_postpone();
+        lock_postpone(); // +1 +1 flaga 0
         {
-            if (threads_terminated->head == NULL)
+            if (threads_terminated->head == NULL) // 1 1 FLAG 0
             {
-                block_task(THREAD_PAUSED);
-                unlock_postpone_and_schedule();
+                block_task(THREAD_PAUSED); // 1 1 flag 1
+                unlock_postpone_and_schedule(); // 0 1 flag 1
                 continue;
             }
 
             thread_control_block *work = list_thread_pop_front(threads_terminated);
             cleanup_terminated_task(work);
-            print(TERMINAL, "PID %d has been terminated :)\n", work->pid);
         }
-        unlock_postpone_and_schedule();
+        unlock_postpone_and_schedule(); // -1 -1 flaga 0
     }
 }

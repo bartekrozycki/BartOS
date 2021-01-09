@@ -1,7 +1,7 @@
 #include "boot_memory_init.h"
 #include "kernel_panic.h"
 #include "physical_memory_bitmap.h"
-#include "terminal.h"
+#include "vga.h"
 #include "serial.h"
 #include "physical_memory_stack.h"
 #include "kernel_kalloc.h"

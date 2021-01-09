@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ints.h"
+#include "keyboard.h"
 
 typedef enum thread_status_t {
     THREAD_RUNNING,
@@ -18,6 +19,7 @@ typedef struct thread_control_block_t {
     i32 time_used;
     u32 pid;
     u32 stack_alloc_ptr;
+    struct kbp_queue_t *kbp_queue;
 } thread_control_block;
 
 typedef struct thread_list_t {

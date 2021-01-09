@@ -18,6 +18,8 @@ static u32 thread_create_counter = 1; // thats bad
 
 void thread_free(thread_control_block *tcb)
 {
+    free(tcb->kbp_queue->sync);
+    free(tcb->kbp_queue); // TODO destroy queue ~ memory leak
     free((void *) tcb->stack_alloc_ptr);
     free(tcb);
 }
@@ -26,7 +28,9 @@ thread_control_block *thread_create(int (*func)(void))
     thread_control_block *thread = calloc(1, sizeof(thread_control_block));
     if(!thread) return NULL;
 
-    thread->stack_alloc_ptr = (u32) calloc(MIB(1), 1);
+    thread->stack_alloc_ptr = (u32) calloc(MIB(1), 1); // TODO handle calloc == NULL
+    thread->kbp_queue = (kbp_queue *) calloc(1, sizeof(struct kbp_queue_t));
+    thread->kbp_queue->sync = (SEMAPHORE *) calloc(1, sizeof(struct SEMAPHORE_T));
 
     thread->esp = (u32) (thread->stack_alloc_ptr + MIB(1));
     thread->esp -= sizeof(struct thread_stack_t);
@@ -47,7 +51,9 @@ thread_control_block *thread_create(int (*func)(void))
     GET_CR3(thread->cr3);
 
     lock_postpone();
-    list_thread_push_back(threads_ready, thread);
+    {
+        list_thread_push_back(threads_ready, thread);
+    }
     unlock_postpone_and_schedule();
 
     return thread;

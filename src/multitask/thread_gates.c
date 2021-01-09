@@ -1,6 +1,4 @@
 #include "threads.h"
-#include "print.h"
-
 
 void thread_entry()
 {

@@ -69,4 +69,6 @@ clean:
 	@rm -f $(OBJS)
 run-terminal-bochs:
 	@gnome-terminal -- bochs
+run-terminal-qemu:
+	@gnome-terminal -- qemu-system-i386 os.iso -m 256
 

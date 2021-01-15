@@ -88,7 +88,7 @@ void irq_handler(InterruptSave is)
 	out(PIC1, PIC_EOI);
 	if (is.int_num >= 40) // PIC2 STARTS FROM GATE 40
 		out(PIC2, PIC_EOI);
-w
+
 	IrqCall caller = IrqCalls[is.int_num - 32];
 
 	if (caller)

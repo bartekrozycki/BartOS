@@ -30,7 +30,7 @@ thread_control_block *thread_create(int (*func)(void))
 
     thread->stack_alloc_ptr = (u32) calloc(MIB(1), 1); // TODO handle calloc == NULL
     thread->kbp_queue = (kbp_queue *) calloc(1, sizeof(struct kbp_queue_t));
-    thread->kbp_queue->sync = (SEMAPHORE *) calloc(1, sizeof(struct SEMAPHORE_T));
+    thread->kbp_queue->sync = create_semaphore(0);
 
     thread->esp = (u32) (thread->stack_alloc_ptr + MIB(1));
     thread->esp -= sizeof(struct thread_stack_t);

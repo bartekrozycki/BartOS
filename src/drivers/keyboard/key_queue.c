@@ -4,25 +4,24 @@
 
 #include "keyboard.h"
 #include "threads.h"
+kbp_queue *get_keyboard_queue( void )
+{
+    return current_focus_tcb->kbp_queue;
+}
 static inline void detectPressed(u16 key_code)
 {
     switch (key_code) {
         case KEY_PRESSED_left_shift:
         case KEY_PRESSED_right_shift:
             current_focus_tcb->kbp_queue->status.shift_pressed = 1;
+            break;
         case KEY_RELEASED_left_shift:
         case KEY_RELEASED_right_shift:
             current_focus_tcb->kbp_queue->status.shift_pressed = 0;
+            break;
     }
 }
-void lock_key_queue()
-{
-    lock_mutex(current_focus_tcb->kbp_queue->sync);
-}
-void unlock_key_queue()
-{
-    unlock_mutex(current_focus_tcb->kbp_queue->sync);
-}
+
 void key_queue_push(KBP *packet)
 {
     kbp_queue *current = current_focus_tcb->kbp_queue;
@@ -41,7 +40,7 @@ void key_queue_push(KBP *packet)
         current->back->next = packet;
         current->back = packet;
     }
-    unlock_key_queue();
+    post_semaphore(current_focus_tcb->kbp_queue->sync);
 }
 
 KBP* key_queue_pop(void)

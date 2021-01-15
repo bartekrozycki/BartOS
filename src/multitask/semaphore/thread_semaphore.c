@@ -31,8 +31,25 @@ SEMAPHORE *create_mutex(void)
 //
 //  lock semaphore & mutex
 //
-#define sem_wait(sem) lock_semaphore(sem)
+void wait_semaphore(SEMAPHORE *semaphore)
+{
+    lock_postpone();
+    {
+        if (--semaphore->current_count < semaphore->max_count) {
 
+            current_running_tcb->next = NULL;
+
+            if (semaphore->first_waiting_task == NULL)
+                semaphore->first_waiting_task = current_running_tcb;
+            else
+                semaphore->last_waiting_task->next = current_running_tcb;
+
+            semaphore->last_waiting_task = current_running_tcb;
+            block_task(THREAD_PAUSED);
+        }
+    }
+    unlock_postpone_and_schedule();
+}
 void lock_semaphore(SEMAPHORE *semaphore) {
     lock_postpone();
     {
@@ -58,8 +75,18 @@ void lock_mutex(SEMAPHORE *semaphore)
 //
 //  unlock semaphore & mutex
 //
-#define sem_post(sem) lock_semaphore(sem)
-
+void post_semaphore(SEMAPHORE *semaphore) {
+    lock_postpone();
+    {
+        if (semaphore->first_waiting_task) {
+            thread_control_block *task = semaphore->first_waiting_task;
+            semaphore->first_waiting_task = task->next;
+            ++semaphore->current_count;
+            unblock_task(task);
+        }
+    }
+    unlock_postpone_and_schedule();
+}
 void unlock_semaphore(SEMAPHORE *semaphore) {
     lock_postpone();
     {

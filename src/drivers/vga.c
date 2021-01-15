@@ -133,7 +133,7 @@ int terminal_writestring(const char* data)
 int terminal_write_base(u32 d, u32 base)
 {
     char i_dec[32];
-    char *x = utoa(d, i_dec, base);
+    char *x = itoa(d, i_dec, base);
     terminal_writestring(x);
 
     return d;

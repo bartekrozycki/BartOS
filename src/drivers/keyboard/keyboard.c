@@ -7,6 +7,8 @@
 #include "threads.h"
 #include "kernel_panic.h"
 
+#define TO_UPPER(x) (x  - ('a' - 'A'))
+
 u8 keymap[128] = 
     "\0"
     "\033" // Esc (27)
@@ -51,12 +53,13 @@ void keyboard_interrupt(InterruptSave *is)
 {
     u8 scancode = in(0x60);
 
-    // scanf lock_mutex & getc lock_mutex == 2
-    if (current_focus_tcb && current_focus_tcb->kbp_queue->sync->current_count < 1)
-        return;
-
     KBP *packet = (KBP *) malloc(sizeof(KBP));
     packet->key_code = (u16) scancode;
+    packet->status = &get_keyboard_queue()->status;
+    if (get_keyboard_queue()->status.shift_pressed)
+        packet->unicode_code = TO_UPPER(keymap[scancode]);
+    else
+        packet->unicode_code = keymap[scancode];
 
     key_queue_push(packet);
 }

@@ -21,3 +21,6 @@ void lock_mutex(SEMAPHORE *semaphore);
 
 void unlock_semaphore(SEMAPHORE *semaphore);
 void unlock_mutex(SEMAPHORE *semaphore);
+
+void wait_semaphore(SEMAPHORE *semaphore);
+void post_semaphore(SEMAPHORE *semaphore);

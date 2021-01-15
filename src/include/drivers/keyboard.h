@@ -64,38 +64,43 @@ typedef enum SCAN_CODE_PRESSED {
     KEY_RELEASED_arrow_left = 0x9c,
 
 
-};
+} SCAN_CODE_PRESSED;
 
 // Key Board Packet
-typedef struct KBP_T {
-    u32 unicode_code;
-    u16 key_code;
-    struct KBP_T *next;
-} KBP;
+
+typedef struct KBP_T KBP;
+
+union flags{
+    u16 flags;
+    struct{
+        u16 key_pressed:1;
+        u16 shift_pressed:1; //
+        u16 ctrl_pressed:1;
+        u16 alt_pressed:1;
+        u16 capslock_active:1;
+        u16 num_lock_active:1;
+        u16 scroll_lock_active:1;
+    };
+};
 
 typedef struct kbp_queue_t {
     struct SEMAPHORE_T *sync;
     KBP *front;
     KBP *back;
-    union{
-        u16 flags;
-        struct{
-            u16 key_pressed:1;
-            u16 shift_pressed:1; //
-            u16 ctrl_pressed:1;
-            u16 alt_pressed:1;
-            u16 capslock_active:1;
-            u16 num_lock_active:1;
-            u16 scroll_lock_active:1;
-        };
-    } status;
+    union flags status;
+
 } kbp_queue;
 
+struct KBP_T {
+    u32 unicode_code;
+    u16 key_code;
+    union flags *status;
+    struct KBP_T *next;
+};
+
+kbp_queue *get_keyboard_queue( void );
 void init_keyboard(void);
 void keyboard_interrupt(InterruptSave *is);
-
-void unlock_key_queue();
-void lock_key_queue();
 
 void key_queue_push(KBP *packet);
 KBP* key_queue_pop(void);

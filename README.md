@@ -1,17 +1,59 @@
 # BartOS
 
-System require at least 256MiB, heap have fixed 128MiB size :)
-VGA memory curently mapped at 0xF000_0000 (=> 0xB8000)
+Special thanks to 
+* [OSDev](https://wiki.osdev.org/Expanded_Main_Page)
+* [OSDev Forum](https://forum.osdev.org/)
 
-## Virtual Map
-### Kernel
->AT 0xE000_0000 
-### Heap 
->AT 0xE800_0000 
-### Kernel Structs
->AT 0xF800_0000\
-0x1000 Paging Directory\
-0x400000 Paging Entrys\
-0x?????? Physical Bitmap\
-0x?????? Physical Memory Address Stack
+## Table of contents
+* [General info](#general-info)
+* [Technologies](#technologies)
+* [Compile](#setup)
+* [Run using bochs](#Bochs)
+* [Run using qemu](#Qemu)
+* [Run on real hardware](#Real-Hardware)
 
+## General info
+BartOS is simple operating system made as university project.
+
+* [x] Memory detection
+* [x] Memory mapping
+* [x] Virtual memory
+* [x] Heap & Heap Allocator
+* [x] Multi-Tasking
+* [x] Keyboard driver
+* [x] Serial Driver
+* [x] VGA 80x25 Driver
+
+## Technologies
+Project is created with:
+* GNU GCC-I686
+* NASM
+* Makefile
+
+## Setup
+To run this project [GCC Cross Compiler](https://wiki.osdev.org/GCC_Cross-Compiler) is required 
+
+Follow this link to install it
+```https://wiki.osdev.org/GCC_Cross-Compiler```
+
+Compile project
+```
+$ make all
+```
+
+### Emulator
+System could be emulated using [Bochs](https://wiki.osdev.org/Bochs) or [Qemu](https://wiki.osdev.org/Qemu)
+#### Bochs
+```shell
+$ make run-terminal-boch
+```
+#### Qemu
+```shell
+$ make run-terminal-qemu
+```
+### Real Hardware
+
+```shell
+$ sudo dd if=os.iso of=/dev/SDX && sync
+```
+where **SDX** is USB block name for example **SDB**

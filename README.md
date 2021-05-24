@@ -1,6 +1,6 @@
 # BartOS
 
-Special thanks to 
+Special thanks for
 * [OSDev](https://wiki.osdev.org/Expanded_Main_Page)
 * [OSDev Forum](https://forum.osdev.org/)
 
